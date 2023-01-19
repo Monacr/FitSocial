@@ -2,8 +2,8 @@ Fit Social is a primarily mobile social media platform that allows users to trac
 
 ## This repo is split into three main parts:
 
-[docs][./docs]: The organizational documents relevant to the project; schedules, goals, roles, etc.
+[docs](./docs): The organizational documents relevant to the project; schedules, goals, roles, etc.
 
-[frontend][./frontend]: Files relevant to the frontend of the project; static frontend files.
+[frontend](./frontend): Files relevant to the frontend of the project; static frontend files.
 
-[backend][./backend]: Files relevant to the backend of the project; static backend files.
+[backend](./backend): Files relevant to the backend of the project; static backend files.
