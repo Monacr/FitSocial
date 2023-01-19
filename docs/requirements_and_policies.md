@@ -6,7 +6,7 @@ This document defines the Fit Social project. It outlines the project's goals, r
 
 ### Team members
 
-- Lawrence: in charge of backend and project architecture.
+- Lawrence: In charge of backend and project architecture.
 - Aaron: In charge of frontend and databases
 - Matthew: In charge of both frontend and backend.
 - Michael: In charge of backend 
