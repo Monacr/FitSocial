@@ -7,3 +7,25 @@ Fit Social is a primarily mobile social media platform that allows users to trac
 [frontend](./frontend): Files relevant to the frontend of the project; static frontend files.
 
 [backend](./backend): Files relevant to the backend of the project; static backend files.
+
+## Running for development
+
+Before running, make sure you have [Rust installed](https://www.rust-lang.org/tools/install) and on the [frontend directory](./frontend) run
+
+```shell
+npm i
+```
+
+To run the backend server, go to [backend](./backend) and run
+
+```shell
+cargo run
+```
+
+To serve the frontend, go to [frontend](./frontend) and run
+
+```shell
+npm start
+```
+
+You can then press `w` to view the UI locally on the web, or scan the QR code or click on the entry in Expo Go to run on mobile.
