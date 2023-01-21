@@ -1,6 +1,6 @@
 docs/requirements_and_policies.html
-./log
-backend/target
+.log/
+backend/target/
 backend/Cargo.lock
 
 node_modules/
@@ -17,3 +17,4 @@ web-build/
 
 # macOS
 .DS_Store
+./
