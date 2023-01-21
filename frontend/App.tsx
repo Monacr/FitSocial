@@ -1,22 +1,16 @@
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import Constants from "expo-constants";
-const { manifest } = Constants;
-
-// URI of the backend (will change for production build)
-const uri = `http://${manifest.debuggerHost.split(":").shift()}:8000`;
+import { URI } from "./lib/constants";
 
 export default function App() {
   const [msg, setMsg] = useState("No message");
 
   async function getMsg() {
     try {
-      const resp = await fetch(uri + "/msg");
+      const resp = await fetch(URI + "/msg");
       setMsg(await resp.text());
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (_) {}
   }
 
   useEffect(() => {
