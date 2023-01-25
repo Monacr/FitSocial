@@ -193,19 +193,19 @@ Team member roles are assigned based on technology familiarity and personal pref
 - Frontend:
 
     These are rough deadlines for frontend features.
-    - Jan 29: User login and profile page
-    - Feb 6: User stats page & content uploading
-    - Feb 13: Main feed page
-    - Feb 20: Comment section, mentions, and direct messaging pages
-    - Mar 1: Quality of life + UI enhancements
+    - [ ] Jan 29: User login and profile page
+    - [ ] Feb 6: User stats page & content uploading
+    - [ ] Feb 13: Main feed page
+    - [ ] Feb 20: Comment section, mentions, and direct messaging pages
+    - [ ] Mar 1: Quality of life + UI enhancements
 
 - Backend:
 
     These are rough deadlines for backend features.
-    - Jan 29: Database schemas, user authentication, and user data persistence
-    - Feb 13: User fitness data retrieval and augmentation and fitness statistcs
-    - Feb 20: Platform-wide content serving based on calculated user preferences
-    - Mar 1: Irrelivant content filtering, comment persistence, automated moderation
+    - [ ] Jan 29: Database schemas, user authentication, and user data persistence
+    - [ ] Feb 13: User fitness data retrieval and augmentation and fitness statistcs
+    - [ ] Feb 20: Platform-wide content serving based on calculated user preferences
+    - [ ] Mar 1: Irrelivant content filtering, comment persistence, automated moderation
 
 ### Risks
 
