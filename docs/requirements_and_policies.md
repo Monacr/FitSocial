@@ -88,26 +88,31 @@ Fit Social is a primarily mobile social media platform that allows users to trac
    - Commenter is banned from commenting by a post creator and thus cannot comment
 
 
-### Michael: Allowing access to photos/camera
-
-1. Actors: User that wants to post a picture 
+### Michael: Posting photos or videos from your gallery/taking a picture or video recording
+1. Actors: user wanting to post a picture/video
 2. Triggers: allow the user to access their pictures or camera from their device
-3. Preconditions: user is on the uploading photos screen
-4. Postconditions: 
-   - Success: access to all photos and camera from mobile device
-   - Failure: must go directly to settings for system to allow access to their photos and camera 
-5. List of steps:
+3. Preconditions: user is on the uploading photos/video screen
+4. Postconditions (success scenario):
+   - Success: access to all gallery and camera and photo is uploaded on their profile
+   - Failure: not having access to the photos and is no photo is uploaded
+5. List of steps (success scenario):
    - User presses the photo upload button
    - User decides to either choose photos from their mobile device or take a picture
-   - System asks permission to allow access to their photos
-   - User clicks accept and not decline
-   - System will access all of the photos from the user’s mobile device
-   - User clicks on the photo to upload
-   - User will choose whether or not to edit their photo
-6. Variations:
-   - Access to the user’s photos
-   - Access to the user’s camera on their mobile device
-7. Exceptions: User clicks on the decline button or system does not have access to photos until allowing photos from settings
+   - User clicks on the choose photos button or-
+   - User clicks on the take photo button
+   - User clicks on the photo
+   - User chooses to edit the photo (filter, resizing, cropping)
+   - User clicks on the next button
+   - User chooses to upload a caption for the photo
+   - User types a caption
+   - User clicks the share button
+6. Extensions/variations:
+   - User’s changes in their edits are not saved when the user does not choose save
+   - User’s caption is not saved when going back to the previous page 
+7. Exceptions: failure conditions and scenarios:
+   - User uploads a photo that is not related to fitness
+   - User connection is blocked by the content filter
+
         
 ### Aaron: Creating an account
 
