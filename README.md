@@ -16,7 +16,13 @@ Before running, make sure you have [Rust installed](https://www.rust-lang.org/to
 npm i
 ```
 
-To run the backend server, go to [backend](./backend) and run
+To run the backend server, go to [backend](./backend) and switch to the nightly version of rust
+
+```shell
+rustup default nightly
+```
+
+Then, run
 
 ```shell
 cargo run
