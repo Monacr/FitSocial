@@ -88,26 +88,31 @@ Fit Social is a primarily mobile social media platform that allows users to trac
    - Commenter is banned from commenting by a post creator and thus cannot comment
 
 
-### Michael: Allowing access to photos/camera
-
-1. Actors: User that wants to post a picture 
+### Michael: Posting photos or videos from your gallery/taking a picture or video recording
+1. Actors: user wanting to post a picture/video
 2. Triggers: allow the user to access their pictures or camera from their device
-3. Preconditions: user is on the uploading photos screen
-4. Postconditions: 
-   - Success: access to all photos and camera from mobile device
-   - Failure: must go directly to settings for system to allow access to their photos and camera 
-5. List of steps:
+3. Preconditions: user is on the uploading photos/video screen
+4. Postconditions (success scenario):
+   - Success: access to all gallery and camera and photo is uploaded on their profile
+   - Failure: not having access to the photos and is no photo is uploaded
+5. List of steps (success scenario):
    - User presses the photo upload button
    - User decides to either choose photos from their mobile device or take a picture
-   - System asks permission to allow access to their photos
-   - User clicks accept and not decline
-   - System will access all of the photos from the user’s mobile device
-   - User clicks on the photo to upload
-   - User will choose whether or not to edit their photo
-6. Variations:
-   - Access to the user’s photos
-   - Access to the user’s camera on their mobile device
-7. Exceptions: User clicks on the decline button or system does not have access to photos until allowing photos from settings
+   - User clicks on the choose photos button or-
+   - User clicks on the take photo button
+   - User clicks on the photo
+   - User chooses to edit the photo (filter, resizing, cropping)
+   - User clicks on the next button
+   - User chooses to upload a caption for the photo
+   - User types a caption
+   - User clicks the share button
+6. Extensions/variations:
+   - User’s changes in their edits are not saved when the user does not choose save
+   - User’s caption is not saved when going back to the previous page 
+7. Exceptions: failure conditions and scenarios:
+   - User uploads a photo that is not related to fitness
+   - User connection is blocked by the content filter
+
         
 ### Aaron: Creating an account
 
@@ -131,18 +136,18 @@ Fit Social is a primarily mobile social media platform that allows users to trac
 - Non-matching login information, where the user enters a username or password that does not match with system database of user information, thus being denied access to account
 - No account, where the user enters a username and/or password that does not exist, thus being denied from access to account
 
-### Lawrence: Upload new fitness statistcs
+### Lawrence: Upload new fitness statistcs (weight)
 
-1. Actors: User that has new data to upload
+1. Actors: User that has new weight data to upload
 2. Triggers: User clicks on the statistics menu
 3. Preconditions: User is logged in
 4. Postconditions: Frontend and backend updated to reflect new user data
 5. List of steps:
-   - User chooses a statistic widget to append to listed in the stats page
-   - User enters new data
+   - User chooses a statistic widget to append to listed in the stats page (in this case it is a graph with the user's weight over time)
+   - User enters a weight (a real number)
    - User clicks submit
-   - Database updated with new information
-   - UI (graphs, displayed statistics) gets updated
+   - Database updated with new information (appened to a list of previous weights along with a timestamp of submission time)
+   - UI gets updated to show the weight graph with a new datapoint connected by a line to the last datapoint (if available)
 6. Extensions: user may instead edit a preexisting field instead of append
 7. Exceptions: user has no previously submitted data, so editing is not possible
 
@@ -192,20 +197,20 @@ Team member roles are assigned based on technology familiarity and personal pref
 
 - Frontend:
 
-    Every one to two weeks one of these features will be implemented in the following order.
-    1. User login and profile page
-    2. User stats page & content uploading
-    3. Main feed page
-    4. Comment section, mentions, and direct messaging pages
-    5. Quality of life + UI enhancements
+    These are rough deadlines for frontend features.
+    - [ ] Jan 29: User login and profile page
+    - [ ] Feb 6: User stats page & content uploading
+    - [ ] Feb 13: Main feed page
+    - [ ] Feb 20: Comment section, mentions, and direct messaging pages
+    - [ ] Mar 1: Quality of life + UI enhancements
 
 - Backend:
 
-    Every one to two weeks one of these features will be implemented in the following order, meant to go along with the needs of the frontend.
-    1. Database schemas, user authentication, and user data persistence
-    2. User fitness data retrieval and augmentation and fitness statistcs
-    3. Platform-wide content serving based on calculated user preferences
-    4. Irrelivant content filtering, comment persistence, automated moderation
+    These are rough deadlines for backend features.
+    - [ ] Jan 29: Database schemas, user authentication, and user data persistence
+    - [ ] Feb 13: User fitness data retrieval and augmentation and fitness statistcs
+    - [ ] Feb 20: Platform-wide content serving based on calculated user preferences
+    - [ ] Mar 1: Irrelivant content filtering, comment persistence, automated moderation
 
 ### Risks
 
