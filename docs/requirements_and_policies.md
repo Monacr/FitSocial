@@ -131,18 +131,18 @@ Fit Social is a primarily mobile social media platform that allows users to trac
 - Non-matching login information, where the user enters a username or password that does not match with system database of user information, thus being denied access to account
 - No account, where the user enters a username and/or password that does not exist, thus being denied from access to account
 
-### Lawrence: Upload new fitness statistcs
+### Lawrence: Upload new fitness statistcs (weight)
 
-1. Actors: User that has new data to upload
+1. Actors: User that has new weight data to upload
 2. Triggers: User clicks on the statistics menu
 3. Preconditions: User is logged in
 4. Postconditions: Frontend and backend updated to reflect new user data
 5. List of steps:
-   - User chooses a statistic widget to append to listed in the stats page
-   - User enters new data
+   - User chooses a statistic widget to append to listed in the stats page (in this case it is a graph with the user's weight over time)
+   - User enters a weight (a real number)
    - User clicks submit
-   - Database updated with new information
-   - UI (graphs, displayed statistics) gets updated
+   - Database updated with new information (appened to a list of previous weights along with a timestamp of submission time)
+   - UI gets updated to show the weight graph with a new datapoint connected by a line to the last datapoint (if available)
 6. Extensions: user may instead edit a preexisting field instead of append
 7. Exceptions: user has no previously submitted data, so editing is not possible
 
