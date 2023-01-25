@@ -192,20 +192,20 @@ Team member roles are assigned based on technology familiarity and personal pref
 
 - Frontend:
 
-    Every one to two weeks one of these features will be implemented in the following order.
-    1. User login and profile page
-    2. User stats page & content uploading
-    3. Main feed page
-    4. Comment section, mentions, and direct messaging pages
-    5. Quality of life + UI enhancements
+    These are rough deadlines for frontend features.
+    - Jan 29: User login and profile page
+    - Feb 6: User stats page & content uploading
+    - Feb 13: Main feed page
+    - Feb 20: Comment section, mentions, and direct messaging pages
+    - Mar 1: Quality of life + UI enhancements
 
 - Backend:
 
-    Every one to two weeks one of these features will be implemented in the following order, meant to go along with the needs of the frontend.
-    1. Database schemas, user authentication, and user data persistence
-    2. User fitness data retrieval and augmentation and fitness statistcs
-    3. Platform-wide content serving based on calculated user preferences
-    4. Irrelivant content filtering, comment persistence, automated moderation
+    These are rough deadlines for backend features.
+    - Jan 29: Database schemas, user authentication, and user data persistence
+    - Feb 13: User fitness data retrieval and augmentation and fitness statistcs
+    - Feb 20: Platform-wide content serving based on calculated user preferences
+    - Mar 1: Irrelivant content filtering, comment persistence, automated moderation
 
 ### Risks
 
