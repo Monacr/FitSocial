@@ -58,6 +58,11 @@ pub struct UserController;
 
 impl UserController {
     const TABLE: &'static str = "user";
+
+    pub async fn get(store: &Store, id: String) -> Result<User, Error> {
+        store.exec_get(id).await
+    }
+
     pub async fn create(store: &Store, data: UserCreate) -> Result<MutateResultData, Error> {
         store.exec_create(Self::TABLE, data).await
     }
@@ -105,5 +110,26 @@ mod tests {
             }
             prev_ctime = Some(v.ctime);
         }
+    }
+
+    #[tokio::test]
+    async fn get_with_id() {
+        let store = Store::try_new_memory().await.unwrap();
+
+        let new_user = UserCreate {
+            name: format!("user"),
+            password: format!("password"),
+        };
+
+        let resdata = UserController::create(&store, new_user)
+            .await
+            .expect("Creating a user failed");
+
+        let res = UserController::get(&store, resdata.id)
+            .await
+            .expect("Getting user failed");
+
+        assert_eq!(res.name, "user");
+        assert_eq!(res.password, "password");
     }
 }

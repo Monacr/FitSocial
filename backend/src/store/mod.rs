@@ -40,6 +40,32 @@ impl Store {
         Ok(Store { ds, ses })
     }
 
+    pub async fn exec_get<T>(&self, id: String) -> Result<T, Error>
+    where
+        T: TryFrom<Object, Error = Error>,
+    {
+        let sql = "SELECT * FROM $id";
+
+        let vars = btreemap! {
+            "id".into() => id.into()
+        };
+
+        let ress = self.ds.execute(sql, &self.ses, Some(vars), true).await?;
+
+        // First result should be an array of objects
+        let first_res = ress
+            .into_iter()
+            .next()
+            .map(|r| r.result)
+            .expect("Did not get a response")?;
+
+        println!("{:?}", first_res.first());
+        // Map array to vector of the expected type
+        let object: Object = Wrapper(first_res.first()).try_into()?;
+
+        object.try_into()
+    }
+
     pub async fn exec_create<T: Creatable>(
         &self,
         tb: &str,
