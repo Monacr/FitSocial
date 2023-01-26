@@ -5,7 +5,7 @@
 //! with the database and send and recieve types defined in
 //! this module.
 
-mod users;
+pub mod users;
 
 use serde::Serialize;
 use ts_rs::TS;

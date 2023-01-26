@@ -7,9 +7,7 @@ edition = "2021"
 rocket = { version = "0.5.0-rc.2"}
 rocket_cors = "0.5.2"
 local-ip-address = "0.5.1"
-
-# Just use memory kv-store for now until more features are built
-surrealdb = {version = "1.0.0-beta.8", default-features=false, features = ['parallel', 'kv-mem'] }
+surrealdb = "1.0.0-beta.8"
 serde = "1.0.152"
 ts-rs = { version = "6" }
 serde_with = "2.2.0"

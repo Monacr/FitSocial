@@ -75,7 +75,7 @@ mod tests {
 
     #[tokio::test]
     async fn insert_select() {
-        let store = Store::try_new().await.unwrap();
+        let store = Store::try_new_memory().await.unwrap();
 
         const N: usize = 5;
         for i in 0..N {
@@ -104,7 +104,6 @@ mod tests {
                 assert!(v.ctime <= prev_ctime);
             }
             prev_ctime = Some(v.ctime);
-            println!("{v:?}");
         }
     }
 }

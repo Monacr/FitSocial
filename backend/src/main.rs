@@ -1,4 +1,4 @@
-//! Entrypoint for the backend binary
+//! Entry point for the backend binary
 
 #![allow(unused)] // CHANGE ONCE THINGS ACTUALLY GET USED
 #[macro_use]
@@ -16,7 +16,7 @@ mod utils;
 
 #[get("/msg")]
 async fn message() -> &'static str {
-    "Fit Social Moments"
+    "Fit Social Moment"
 }
 
 #[rocket::main]

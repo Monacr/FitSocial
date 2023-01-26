@@ -24,9 +24,18 @@ pub struct Store {
 pub trait Creatable: Into<Value> {}
 
 impl Store {
-    pub async fn try_new() -> Result<Self, Error> {
-        // TODO: change from memory to a more permanent store
+    /// Create new in-memory datastore for testing
+    #[cfg(test)]
+    pub async fn try_new_memory() -> Result<Self, Error> {
         let ds = Datastore::new("memory").await?;
+        let ses = Session::for_db("testns", "testdb");
+        Ok(Store { ds, ses })
+    }
+
+    /// Create a persistent datastore
+    pub async fn try_new() -> Result<Self, Error> {
+        // Will need to change to cloud or something eventually
+        let ds = Datastore::new("file://dev.db").await?;
         let ses = Session::for_db("appns", "appdb");
         Ok(Store { ds, ses })
     }
