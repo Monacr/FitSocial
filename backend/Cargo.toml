@@ -3,11 +3,6 @@ name = "backend"
 version = "0.1.0"
 edition = "2021"
 
-[lib]
-name = "fit_social_backend"
-path = "src/main.rs"
-
-
 [dependencies]
 rocket = { version = "0.5.0-rc.2"}
 rocket_cors = "0.5.2"

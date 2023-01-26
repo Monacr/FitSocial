@@ -56,7 +56,7 @@ impl Store {
 
         if let Value::Object(mut obj) = first_val.first() {
             obj.try_take::<String>("id")
-                .map(|ok| MutateResultData::from(ok))
+                .map(MutateResultData::from)
                 .map_err(|err| Error::StoreFailToCreate(format!("exec_create {tb} {err}")))
         } else {
             Err(Error::StoreFailToCreate(format!(

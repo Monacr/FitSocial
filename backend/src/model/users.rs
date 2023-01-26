@@ -103,8 +103,8 @@ mod tests {
             if let Some(prev_ctime) = prev_ctime {
                 assert!(v.ctime <= prev_ctime);
             }
-            prev_ctime = Some(v.ctime.clone());
-            println!("{:?}", v);
+            prev_ctime = Some(v.ctime);
+            println!("{v:?}");
         }
     }
 }

@@ -1,3 +1,6 @@
+//! Entrypoint for the backend binary
+
+#![allow(unused)] // CHANGE ONCE THINGS ACTUALLY GET USED
 #[macro_use]
 extern crate rocket;
 
@@ -24,7 +27,7 @@ async fn main() -> Result<(), rocket::Error> {
     };
     let _rocket = rocket::custom(config)
         .mount("/", routes![message])
-        .attach(settings::CORS)
+        .attach(settings::Cors)
         .launch()
         .await?;
 
