@@ -13,7 +13,7 @@ mod utils;
 
 #[get("/msg")]
 async fn message() -> &'static str {
-    "Fit Social Moment"
+    "Fit Social Moments"
 }
 
 #[rocket::main]
