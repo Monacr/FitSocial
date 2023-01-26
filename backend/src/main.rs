@@ -4,7 +4,12 @@ extern crate rocket;
 use local_ip_address::local_ip;
 use rocket::config::Config;
 
+mod error;
+mod model;
+mod prelude;
 mod settings;
+mod store;
+mod utils;
 
 #[get("/msg")]
 async fn message() -> &'static str {
