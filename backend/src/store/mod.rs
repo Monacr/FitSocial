@@ -23,6 +23,9 @@ pub struct Store {
 /// Trait for types that can be created for the database
 pub trait Creatable: Into<Value> {}
 
+/// Trait for types that can be updated in the database
+pub trait Updatable: Into<Value> {}
+
 impl Store {
     /// Create new in-memory datastore for testing
     #[cfg(test)]
@@ -40,7 +43,7 @@ impl Store {
         Ok(Store { ds, ses })
     }
 
-    pub async fn exec_get<T>(&self, id: String) -> Result<T, Error>
+    pub async fn exec_get<T>(&self, id: &str) -> Result<T, Error>
     where
         T: TryFrom<Object, Error = Error>,
     {
@@ -73,16 +76,18 @@ impl Store {
     ) -> Result<MutateResultData, Error> {
         let sql = "CREATE type::table($tb) CONTENT $data RETURN id";
 
+        // Need to make the data value as an object to insert ctime
         let mut data: Object = Wrapper(data.into()).try_into()?;
         let now = Datetime::default().timestamp_nanos();
         data.insert("ctime".into(), now.into());
 
         let vars = btreemap! {
             "tb".into() => tb.into(),
-            "data".into() => Value::from(data)
+            "data".into() => data.into(),
         };
 
-        let ress = self.ds.execute(sql, &self.ses, Some(vars), false).await?;
+        println!("{:?}", self.ses);
+        let ress = self.ds.execute(sql, &self.ses, Some(vars), true).await?;
         let first_val = ress
             .into_iter()
             .next()
@@ -96,6 +101,36 @@ impl Store {
         } else {
             Err(Error::StoreFailToCreate(format!(
                 "exec_create {tb}, nothing returned."
+            )))
+        }
+    }
+
+    pub async fn exec_update<T: Updatable>(
+        &self,
+        id: &str,
+        data: T,
+    ) -> Result<MutateResultData, Error> {
+        let sql = "UPDATE $id MERGE $data RETURN id";
+
+        let vars = btreemap! {
+            "id".into() => id.into(),
+            "data".into() => data.into(),
+        };
+
+        let ress = self.ds.execute(sql, &self.ses, Some(vars), false).await?;
+        let first_val = ress
+            .into_iter()
+            .next()
+            .map(|r| r.result)
+            .expect("id not returned")?;
+
+        if let Value::Object(mut obj) = first_val.first() {
+            obj.try_take::<String>("id")
+                .map(MutateResultData::from)
+                .map_err(|err| Error::StoreFailToCreate(format!("exec_update {id} {err}")))
+        } else {
+            Err(Error::StoreFailToCreate(format!(
+                "exec_update {id}, nothing returned."
             )))
         }
     }

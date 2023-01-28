@@ -1,12 +1,14 @@
 //! Model and controller methods for the user type
 
+use std::collections::BTreeMap;
+
 use maplit::btreemap;
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Object, Value};
 use ts_rs::TS;
 
 use crate::prelude::*;
-use crate::store::{Creatable, Store, TryTake};
+use crate::store::{Creatable, Store, TryTake, Updatable};
 
 use super::MutateResultData;
 
@@ -34,6 +36,7 @@ impl TryFrom<Object> for User {
     }
 }
 
+/// Struct that can be used to create a new user in the database
 #[derive(Debug, Deserialize, TS)]
 #[ts(export, export_to = "../frontend/src/bindings/")]
 pub struct UserCreate {
@@ -54,13 +57,48 @@ impl From<UserCreate> for Value {
 
 impl Creatable for UserCreate {}
 
+/// Struct that can be used to update a user
+/// Only [Some] fields will be updated
+#[derive(Debug, Deserialize, TS)]
+#[ts(export, export_to = "../frontend/src/bindings/")]
+pub struct UserUpdate {
+    pub name: Option<String>,
+    pub password: Option<String>,
+}
+
+impl From<UserUpdate> for Value {
+    fn from(user_u: UserUpdate) -> Self {
+        let mut data = BTreeMap::new();
+
+        if let Some(name) = user_u.name {
+            data.insert("name".into(), name.into());
+        }
+
+        if let Some(password) = user_u.password {
+            data.insert("password".into(), password.into());
+        }
+
+        Value::Object(data.into())
+    }
+}
+
+impl Updatable for UserUpdate {}
+
 pub struct UserController;
 
 impl UserController {
     const TABLE: &'static str = "user";
 
-    pub async fn get(store: &Store, id: String) -> Result<User, Error> {
-        store.exec_get(id).await
+    pub async fn get(store: &Store, id: &str) -> Result<User, Error> {
+        store.exec_get(&id).await
+    }
+
+    pub async fn update(
+        store: &Store,
+        id: &str,
+        data: UserUpdate,
+    ) -> Result<MutateResultData, Error> {
+        store.exec_update(id, data).await
     }
 
     pub async fn create(store: &Store, data: UserCreate) -> Result<MutateResultData, Error> {
@@ -76,7 +114,7 @@ impl UserController {
 mod tests {
     use crate::store::Store;
 
-    use super::{UserController, UserCreate};
+    use super::{UserController, UserCreate, UserUpdate};
 
     #[tokio::test]
     async fn insert_select() {
@@ -117,19 +155,71 @@ mod tests {
         let store = Store::try_new_memory().await.unwrap();
 
         let new_user = UserCreate {
-            name: format!("user"),
-            password: format!("password"),
+            name: "user".to_string(),
+            password: "password".to_string(),
         };
 
-        let resdata = UserController::create(&store, new_user)
+        let res = UserController::create(&store, new_user)
             .await
             .expect("Creating a user failed");
 
-        let res = UserController::get(&store, resdata.id)
+        let res = UserController::get(&store, &res.id)
             .await
             .expect("Getting user failed");
 
         assert_eq!(res.name, "user");
         assert_eq!(res.password, "password");
+    }
+
+    #[tokio::test]
+    async fn update_partial_and_full() {
+        let store = Store::try_new_memory().await.unwrap();
+
+        let new_user = UserCreate {
+            name: "user".to_string(),
+            password: "password".to_string(),
+        };
+
+        let res = UserController::create(&store, new_user)
+            .await
+            .expect("Creating a user failed");
+
+        let id = &res.id;
+
+        let change_name = UserUpdate {
+            name: Some("bro".to_string()),
+            password: None,
+        };
+
+        let res = UserController::update(&store, id, change_name)
+            .await
+            .expect("Updating user failed");
+
+        assert_eq!(&res.id, id);
+
+        let get = UserController::get(&store, id)
+            .await
+            .expect("Getting user failed");
+
+        assert_eq!(get.name, "bro");
+        assert_eq!(get.password, "password");
+
+        let change_name = UserUpdate {
+            name: Some("Bro2".to_string()),
+            password: Some("VerySecurePassword".to_string()),
+        };
+
+        let res = UserController::update(&store, id, change_name)
+            .await
+            .expect("Updating user failed");
+
+        assert_eq!(&res.id, id);
+
+        let get = UserController::get(&store, id)
+            .await
+            .expect("Getting user failed");
+
+        assert_eq!(get.name, "Bro2");
+        assert_eq!(get.password, "VerySecurePassword");
     }
 }
