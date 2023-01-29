@@ -6,7 +6,7 @@ use crate::model::MutateResultData;
 use crate::prelude::*;
 
 use maplit::btreemap;
-use surrealdb::sql::{Array, Datetime, Object, Value};
+use surrealdb::sql::{thing, Array, Datetime, Object, Value};
 use surrealdb::{Datastore, Session};
 
 mod try_froms;
@@ -47,10 +47,10 @@ impl Store {
     where
         T: TryFrom<Object, Error = Error>,
     {
-        let sql = "SELECT * FROM $id";
+        let sql = "SELECT * FROM $th";
 
         let vars = btreemap! {
-            "id".into() => id.into()
+            "th".into() => thing(id)?.into()
         };
 
         let ress = self.ds.execute(sql, &self.ses, Some(vars), true).await?;
@@ -86,8 +86,7 @@ impl Store {
             "data".into() => data.into(),
         };
 
-        println!("{:?}", self.ses);
-        let ress = self.ds.execute(sql, &self.ses, Some(vars), true).await?;
+        let ress = self.ds.execute(sql, &self.ses, Some(vars), false).await?;
         let first_val = ress
             .into_iter()
             .next()
@@ -110,10 +109,10 @@ impl Store {
         id: &str,
         data: T,
     ) -> Result<MutateResultData, Error> {
-        let sql = "UPDATE $id MERGE $data RETURN id";
+        let sql = "UPDATE $th MERGE $data RETURN id";
 
         let vars = btreemap! {
-            "id".into() => id.into(),
+            "th".into() => thing(id)?.into(),
             "data".into() => data.into(),
         };
 
