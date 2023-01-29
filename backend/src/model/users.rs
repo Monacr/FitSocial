@@ -1,17 +1,14 @@
 //! Model and controller methods for the user type
 
-use std::collections::BTreeMap;
-
+use super::MutateResultData;
+use crate::prelude::*;
+use crate::store::{Creatable, Store, TryTake, Updatable};
 use maplit::btreemap;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
+use std::collections::BTreeMap;
 use surrealdb::sql::{Object, Value};
 use ts_rs::TS;
-
-use crate::prelude::*;
-use crate::store::{Creatable, Store, TryTake, Updatable};
-
-use super::MutateResultData;
 
 #[derive(Debug, Serialize, TS)]
 #[ts(export, export_to = "../frontend/src/bindings/")]
@@ -64,7 +61,8 @@ impl Creatable for UserCreate {}
 #[derive(Debug, Deserialize, TS)]
 #[ts(export, export_to = "../frontend/src/bindings/")]
 pub struct UserUpdate {
-    pub password: Option<String>, // Don't allow updating users
+    // Don't allow updating usernames
+    pub password: Option<String>,
 }
 
 impl From<UserUpdate> for Value {
