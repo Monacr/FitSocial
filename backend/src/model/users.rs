@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 
 use maplit::btreemap;
 use serde::{Deserialize, Serialize};
+use serde_with::skip_serializing_none;
 use surrealdb::sql::{Object, Value};
 use ts_rs::TS;
 
@@ -59,20 +60,16 @@ impl Creatable for UserCreate {}
 
 /// Struct that can be used to update a user
 /// Only [Some] fields will be updated
+#[skip_serializing_none]
 #[derive(Debug, Deserialize, TS)]
 #[ts(export, export_to = "../frontend/src/bindings/")]
 pub struct UserUpdate {
-    pub name: Option<String>,
-    pub password: Option<String>,
+    pub password: Option<String>, // Don't allow updating users
 }
 
 impl From<UserUpdate> for Value {
     fn from(user_u: UserUpdate) -> Self {
         let mut data = BTreeMap::new();
-
-        if let Some(name) = user_u.name {
-            data.insert("name".into(), name.into());
-        }
 
         if let Some(password) = user_u.password {
             data.insert("password".into(), password.into());
@@ -90,7 +87,7 @@ impl UserController {
     const TABLE: &'static str = "user";
 
     pub async fn get(store: &Store, id: &str) -> Result<User, Error> {
-        store.exec_get(&id).await
+        store.exec_get(id).await
     }
 
     pub async fn update(
@@ -102,7 +99,8 @@ impl UserController {
     }
 
     pub async fn create(store: &Store, data: UserCreate) -> Result<MutateResultData, Error> {
-        store.exec_create(Self::TABLE, data).await
+        let name = &data.name.clone();
+        store.exec_create(Self::TABLE, data, Some(name)).await
     }
 
     pub async fn select_all(store: &Store) -> Result<Vec<User>, Error> {
@@ -186,12 +184,9 @@ mod tests {
 
         let id = &res.id;
 
-        let change_name = UserUpdate {
-            name: Some("bro".to_string()),
-            password: None,
-        };
+        let change_nothing = UserUpdate { password: None };
 
-        let res = UserController::update(&store, id, change_name)
+        let res = UserController::update(&store, id, change_nothing)
             .await
             .expect("Updating user failed");
 
@@ -201,15 +196,13 @@ mod tests {
             .await
             .expect("Getting user failed");
 
-        assert_eq!(get.name, "bro");
         assert_eq!(get.password, "password");
 
-        let change_name = UserUpdate {
-            name: Some("Bro2".to_string()),
+        let change_password = UserUpdate {
             password: Some("VerySecurePassword".to_string()),
         };
 
-        let res = UserController::update(&store, id, change_name)
+        let res = UserController::update(&store, id, change_password)
             .await
             .expect("Updating user failed");
 
@@ -219,7 +212,6 @@ mod tests {
             .await
             .expect("Getting user failed");
 
-        assert_eq!(get.name, "Bro2");
         assert_eq!(get.password, "VerySecurePassword");
     }
 }

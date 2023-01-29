@@ -4,11 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rocket = { version = "0.5.0-rc.2"}
+rocket = { version = "0.5.0-rc.2", features = ['json']}
 rocket_cors = "0.5.2"
 local-ip-address = "0.5.1"
 surrealdb = "1.0.0-beta.8"
 serde = "1.0.152"
+serde_json = "1.0.91"
 ts-rs = { version = "6" }
 serde_with = "2.2.0"
 thiserror = "1.0.38"

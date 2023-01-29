@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { URI } from "./lib/constants";
+import { URI } from "./src/constants";
 
 export default function App() {
   const [msg, setMsg] = useState("No message");
