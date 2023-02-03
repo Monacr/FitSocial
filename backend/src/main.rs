@@ -1,10 +1,18 @@
+//! Entry point for the backend binary
+
+#![allow(unused)] // CHANGE ONCE THINGS ACTUALLY GET USED
 #[macro_use]
 extern crate rocket;
 
 use local_ip_address::local_ip;
 use rocket::config::Config;
+use server::routes::*;
 
-mod settings;
+mod error;
+mod model;
+mod prelude;
+mod server;
+mod store;
 
 #[get("/msg")]
 async fn message() -> &'static str {
@@ -18,8 +26,12 @@ async fn main() -> Result<(), rocket::Error> {
         ..Config::debug_default()
     };
     let _rocket = rocket::custom(config)
-        .mount("/", routes![message])
-        .attach(settings::CORS)
+        .mount(
+            "/",
+            routes![message, get_user, get_users, signup, user_update],
+        )
+        .attach(server::settings::Cors)
+        .attach(server::fairings::DbFairing)
         .launch()
         .await?;
 

@@ -1,0 +1,36 @@
+# -*- restclient -*-
+
+# Create user
+POST http://10.0.0.117:8000/signup
+Content-Type: application/json
+
+{
+        "name":"bro",
+        "password":"bropassword"
+}
+
+# Returned id user:bro
+
+# Get that user
+GET http://10.0.0.117:8000/users/user:bro
+#
+
+POST http://10.0.0.117:8000/signup
+Content-Type: application/json
+
+{
+        "name":"lawrence",
+        "password":"bruh1232"
+}
+
+#
+GET http://10.0.0.117:8000/users
+#
+
+
+POST http://10.0.0.117:8000/users/user:bro/update
+Content-Type: application/json
+
+{
+        "password": "bruhpassword"
+}
