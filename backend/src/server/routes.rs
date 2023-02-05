@@ -1,12 +1,11 @@
-//! Defines the routes used by the server to receive and send HTTP requests.
-
-use rocket::http::{Cookie, CookieJar};
-use rocket::{serde::json::Json, State};
+//! Defines the routes used by the server to receive HTTP requests.
 
 use crate::model::users::{LoginInfo, Signup, User, UserController, UserCreate, UserUpdate};
 use crate::model::MutateResultData;
 use crate::prelude::Error;
 use crate::store::Store;
+use rocket::http::{Cookie, CookieJar};
+use rocket::{serde::json::Json, State};
 
 #[get("/users/<id>")]
 pub async fn get_user(id: &str, store: &State<Store>) -> Result<Json<User>, Error> {
@@ -66,15 +65,14 @@ pub async fn user_update(
 
 // TODO: change to something useful
 #[get("/users/<id>/secret")]
-pub async fn get_secret(id: &str, jar: &CookieJar<'_>) -> Json<Option<&'static str>> {
+pub async fn get_secret(id: &str, jar: &CookieJar<'_>) -> &'static str {
     let auth_id = jar.get_private("auth_id");
+
     if let Some(cookie) = auth_id {
         if cookie.value() == id {
-            Json(Some("secret message !!!!!"))
-        } else {
-            Json(Some("permission denied"))
+            return "secret message !!!!!";
         }
-    } else {
-        Json(None)
     }
+
+    "permission denied"
 }

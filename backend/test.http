@@ -52,5 +52,5 @@ POST http://10.0.0.117:8000/users/user:bro/update
 Content-Type: application/json
 
 {
-        "password":"bruh",
+        "password":"bruh"
 }
