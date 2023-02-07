@@ -5,6 +5,8 @@ on:
 
 name: Frontend Continuous Integration
 jobs:
+  build:
+    
     runs-on: ubuntu-latest
 
     strategy:
