@@ -1,7 +1,7 @@
 on:
   push:
     paths:
-    - ./frontend/**
+      - 'frontend/**'
 
 name: Frontend Continuous Integration
 jobs:
