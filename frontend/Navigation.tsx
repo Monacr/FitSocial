@@ -10,8 +10,8 @@ const AuthStack = () => {
     return (
         <ScreenStack.Navigator screenOptions={{headerShown: false}}>
             <ScreenStack.Screen name ="Login" component = {LoginScreen}/>
-            <ScreenStack.Screen name ="SignUp" component = {SignUpScreen}/>0
-
+            <ScreenStack.Screen name ="SignUp" component = {SignUpScreen}/>
+            <ScreenStack.Screen name ="Home" component = {Home}/>
 
         </ScreenStack.Navigator>
     )
