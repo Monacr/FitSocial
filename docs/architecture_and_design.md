@@ -129,4 +129,4 @@ For the backend, we will user Rust’s built-in [documentation features](https:/
 
 React has similar features and we’ll use that for the frontend.
 
-As needed, we will create READMEs to explain how to use and develop the program. As we publish to the App Store we will add descriptions and guides as necessary.
+As needed, we will create READMEs to explain how to use and develop the program. As we publish to the LoginScreen Store we will add descriptions and guides as necessary.
