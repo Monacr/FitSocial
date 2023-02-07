@@ -11,8 +11,9 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
-      - run: cd ./backend
-      - run: cargo check
+      - run: |
+          cd ./backend
+          cargo check
 
   test:
     name: cargo test
@@ -22,8 +23,9 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
-      - run: cd ./backend
-      - run: cargo test --all-features
+      - run: |
+          cd ./backend
+          cargo test --all-features
 
   clippy:
     name: cargo clippy
@@ -33,5 +35,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
-      - run: cd ./backend
-      - run: cargo clippy
+      - run: |
+          cd ./backend
+          cargo clippy
