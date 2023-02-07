@@ -6,31 +6,51 @@ Content-Type: application/json
 
 {
         "name":"bro",
+        "email":"yo",
         "password":"bropassword"
 }
 
-# Returned id user:bro
-
-# Get that user
-GET http://10.0.0.117:8000/users/user:bro
 #
+GET http://10.0.0.117:8000/users/user:bro
 
+#
+POST http://10.0.0.117:8000/login
+Content-Type: application/json
+
+{
+        "username":"bro",
+        "password":"bropassword"
+}
+
+#
+GET http://10.0.0.117:8000/users/user:bro/secret
+
+#
+GET http://10.0.0.117:8000/users/user:sis/secret
+
+#
+POST http://10.0.0.117:8000/users/logout
+Content-Type: application/json
+
+
+# Create user
 POST http://10.0.0.117:8000/signup
 Content-Type: application/json
 
 {
-        "name":"lawrence",
-        "password":"bruh1232"
+        "name":"sis",
+        "email":"sis@email",
+        "password":"sispassword"
 }
+
 
 #
 GET http://10.0.0.117:8000/users
+
 #
-
-
 POST http://10.0.0.117:8000/users/user:bro/update
 Content-Type: application/json
 
 {
-        "password": "bruhpassword"
+        "password":"bruh"
 }

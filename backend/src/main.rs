@@ -28,7 +28,16 @@ async fn main() -> Result<(), rocket::Error> {
     let _rocket = rocket::custom(config)
         .mount(
             "/",
-            routes![message, get_user, get_users, signup, user_update],
+            routes![
+                message,
+                get_user,
+                get_users,
+                signup,
+                user_update,
+                login,
+                logout,
+                get_secret
+            ],
         )
         .attach(server::settings::Cors)
         .attach(server::fairings::DbFairing)

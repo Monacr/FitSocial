@@ -15,6 +15,7 @@ npm-debug.*
 *.orig.*
 web-build/
 .idea/
+frontend/package-lock.json
 
 # macOS
 .DS_Store

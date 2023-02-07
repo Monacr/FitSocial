@@ -28,6 +28,12 @@ pub enum Error {
 
     #[error("Property '{0}' not found")]
     PropertyError(String),
+
+    #[error("Username or password incorrect")]
+    LoginError,
+
+    #[error("Internal server error while computing")]
+    ServerComputationError,
 }
 
 impl<'a> Responder<'a, 'static> for Error {
