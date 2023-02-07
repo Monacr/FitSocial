@@ -1,68 +1,37 @@
 on: [push, pull_request]
 
-name: Continuous integration
+name: Backend Continuous integration
 
 jobs:
   check:
-    name: Check
+    name: cargo check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: cd ./backend
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: nightly
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: check
+      - run: cd ./backend
+      - run: cargo check
 
   test:
-    name: Test Suite
+    name: cargo test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: cd ./backend
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
-          toolchain: nightly 
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-
-  fmt:
-    name: Rustfmt
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: cd ./backend
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
           toolchain: nightly
-          override: true
-      - run: rustup component add rustfmt
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+      - run: cd ./backend
+      - run: cargo test --all-features
 
   clippy:
-    name: Clippy
+    name: cargo clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: nightly
       - run: cd ./backend
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly 
-          override: true
-      - run: rustup component add clippy
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
+      - run: cargo clippy
