@@ -1,7 +1,6 @@
 docs/requirements_and_policies.html
 .log/
 backend/target/
-backend/Cargo.lock
 
 node_modules/
 .expo/

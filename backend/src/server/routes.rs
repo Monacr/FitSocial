@@ -39,9 +39,7 @@ pub async fn signup(
     jar: &CookieJar<'_>,
     store: &State<Store>,
 ) -> Result<Json<MutateResultData>, Error> {
-    let res: MutateResultData = UserController::signup(store, new_user.0)
-        .await
-        .map(|data| data.into())?;
+    let res: MutateResultData = UserController::signup(store, new_user.0).await?;
 
     jar.add_private(Cookie::new("auth_id", res.id.to_string()));
     Ok(Json(res))

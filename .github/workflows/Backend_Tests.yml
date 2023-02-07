@@ -28,16 +28,14 @@ jobs:
           cargo test --all-features
 
   clippy:
+    name: cargo clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
         with:
-            toolchain: nightly
-            components: clippy
-            override: true
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features --manifest-path ./backend/Cargo.toml
-
+          toolchain: nightly
+          components: clippy
+      - run: |
+          cd ./backend
+          cargo clippy -- -D warnings -A clippy::let-unit-value

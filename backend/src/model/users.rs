@@ -225,10 +225,8 @@ impl UserController {
             .map(char::from)
             .collect();
 
-        Ok(
-            argon2::hash_encoded(password.as_bytes(), salt.as_bytes(), &Config::default())
-                .map_err(|_| Error::ServerComputationError)?,
-        )
+        argon2::hash_encoded(password.as_bytes(), salt.as_bytes(), &Config::default())
+            .map_err(|_| Error::ServerComputationError)
     }
 }
 
