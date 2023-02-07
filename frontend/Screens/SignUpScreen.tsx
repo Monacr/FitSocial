@@ -1,6 +1,12 @@
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from "react-native";
+import {useState } from "react";
+import {
+    StyleSheet,
+    Text,
+    View,
+    TextInput,
+    TouchableOpacity,
+}   from "react-native";
 import { URI } from "../src/constants";
 
 export default function SignUpScreen() {
