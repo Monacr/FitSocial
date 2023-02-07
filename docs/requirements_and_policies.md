@@ -185,7 +185,7 @@ The code base will follow software engineering principles for readability, modul
 
 ### Team member roles
 
-Team member roles are assigned based on technology familiarity and personal preferences in such a way that workloads are evenly split and distinct enough to allow developer intendance.
+Team member roles are assigned based on technology familiarity and personal preferences in such a way that workloads are evenly split and distinct enough to allow developer independence.
 
 - Lawrence: in charge of backend, project architecture. Will design and build the backend and will define the high-level project architecture (i.e. the technologies and design principles used).
 - Aaron: In charge of frontend and databases. Will design and build the frontend, mainly focusing on bringing database data to the frontend and tying that with the UI.
@@ -207,7 +207,7 @@ Team member roles are assigned based on technology familiarity and personal pref
 - Backend:
 
     These are rough deadlines for backend features.
-    - [ ] Jan 29: Database schemas, user authentication, and user data persistence
+    - [x] Jan 29: Database schemas, user authentication, and user data persistence
     - [ ] Feb 13: User fitness data retrieval and augmentation and fitness statistcs
     - [ ] Feb 20: Platform-wide content serving based on calculated user preferences
     - [ ] Mar 1: Irrelivant content filtering, comment persistence, automated moderation

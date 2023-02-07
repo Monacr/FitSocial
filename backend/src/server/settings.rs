@@ -1,3 +1,5 @@
+//! Server settings
+
 // Struct containing the settings for the cross origin resource policy
 pub struct Cors;
 

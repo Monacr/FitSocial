@@ -6,13 +6,13 @@ extern crate rocket;
 
 use local_ip_address::local_ip;
 use rocket::config::Config;
+use server::routes::*;
 
 mod error;
 mod model;
 mod prelude;
-mod settings;
+mod server;
 mod store;
-mod utils;
 
 #[get("/msg")]
 async fn message() -> &'static str {
@@ -26,8 +26,21 @@ async fn main() -> Result<(), rocket::Error> {
         ..Config::debug_default()
     };
     let _rocket = rocket::custom(config)
-        .mount("/", routes![message])
-        .attach(settings::Cors)
+        .mount(
+            "/",
+            routes![
+                message,
+                get_user,
+                get_users,
+                signup,
+                user_update,
+                login,
+                logout,
+                get_secret
+            ],
+        )
+        .attach(server::settings::Cors)
+        .attach(server::fairings::DbFairing)
         .launch()
         .await?;
 

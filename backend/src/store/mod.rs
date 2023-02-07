@@ -6,7 +6,7 @@ use crate::model::MutateResultData;
 use crate::prelude::*;
 
 use maplit::btreemap;
-use surrealdb::sql::{Array, Datetime, Object, Value};
+use surrealdb::sql::{thing, Array, Datetime, Object, Value};
 use surrealdb::{Datastore, Session};
 
 mod try_froms;
@@ -22,6 +22,9 @@ pub struct Store {
 
 /// Trait for types that can be created for the database
 pub trait Creatable: Into<Value> {}
+
+/// Trait for types that can be updated in the database
+pub trait Updatable: Into<Value> {}
 
 impl Store {
     /// Create new in-memory datastore for testing
@@ -40,21 +43,80 @@ impl Store {
         Ok(Store { ds, ses })
     }
 
+    pub async fn exec_get<T>(&self, id: &str) -> Result<T, Error>
+    where
+        T: TryFrom<Object, Error = Error>,
+    {
+        let sql = "SELECT * FROM $th";
+
+        let vars = btreemap! {
+            "th".into() => thing(id)?.into()
+        };
+
+        let ress = self.ds.execute(sql, &self.ses, Some(vars), true).await?;
+
+        // First result should be an array of objects
+        let first_res = ress
+            .into_iter()
+            .next()
+            .map(|r| r.result)
+            .expect("Did not get a response")?
+            .first();
+
+        if Value::None == first_res {
+            return Err(Error::StoreFailToGet(id.to_string()));
+        }
+
+        // Map array to vector of the expected type
+        let object: Object = Wrapper(first_res).try_into()?;
+
+        object.try_into()
+    }
+
+    pub async fn thing_exists(&self, id: &str) -> Result<bool, Error> {
+        let sql = "SELECT * FROM $th";
+
+        let vars = btreemap! {
+            "th".into() => thing(id)?.into()
+        };
+
+        let ress = self.ds.execute(sql, &self.ses, Some(vars), true).await?;
+
+        // First result should be an array of objects
+        let first_res = ress
+            .into_iter()
+            .next()
+            .map(|r| r.result)
+            .expect("Did not get a response")?
+            .first();
+
+        Ok(first_res != Value::None)
+    }
+
     pub async fn exec_create<T: Creatable>(
         &self,
         tb: &str,
         data: T,
+        custom_id: Option<&str>,
     ) -> Result<MutateResultData, Error> {
-        let sql = "CREATE type::table($tb) CONTENT $data RETURN id";
+        let mut vars = btreemap! {
+            "tb".into() => tb.into(),
+        };
 
+        let sql = if let Some(custom_id) = custom_id {
+            vars.insert("th".into(), thing(&format!("{tb}:{custom_id}"))?.into());
+            "CREATE $th CONTENT $data RETURN id"
+        } else {
+            vars.insert("tb".into(), tb.into());
+            "CREATE type::table($tb) CONTENT $data RETURN id"
+        };
+
+        // Need to make the data value as an object to insert ctime
         let mut data: Object = Wrapper(data.into()).try_into()?;
         let now = Datetime::default().timestamp_nanos();
         data.insert("ctime".into(), now.into());
 
-        let vars = btreemap! {
-            "tb".into() => tb.into(),
-            "data".into() => Value::from(data)
-        };
+        vars.insert("data".into(), data.into());
 
         let ress = self.ds.execute(sql, &self.ses, Some(vars), false).await?;
         let first_val = ress
@@ -70,6 +132,43 @@ impl Store {
         } else {
             Err(Error::StoreFailToCreate(format!(
                 "exec_create {tb}, nothing returned."
+            )))
+        }
+    }
+
+    pub async fn exec_update<T: Updatable>(
+        &self,
+        id: &str,
+        data: T,
+    ) -> Result<MutateResultData, Error> {
+        // Make sure the data exists
+        // TODO: there must be a way to do this directly in surreal?
+        if !self.thing_exists(id).await? {
+            return Err(Error::StoreFailToGet(id.to_string()));
+        }
+
+        let sql = "UPDATE $th MERGE $data RETURN id";
+
+        let vars = btreemap! {
+            "th".into() => thing(id)?.into(),
+            "data".into() => data.into(),
+        };
+
+        let ress = self.ds.execute(sql, &self.ses, Some(vars), true).await?;
+        let first_res = ress
+            .into_iter()
+            .next()
+            .map(|r| r.result)
+            .expect("id not returned")?
+            .first();
+
+        if let Value::Object(mut obj) = first_res {
+            obj.try_take::<String>("id")
+                .map(MutateResultData::from)
+                .map_err(|err| Error::StoreFailToCreate(format!("exec_update {id} {err}")))
+        } else {
+            Err(Error::StoreFailToCreate(format!(
+                "exec_update {id}, nothing returned."
             )))
         }
     }
