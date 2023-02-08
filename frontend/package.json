@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^0.17.2",
+    "@react-navigation/native-stack": "^6.9.9",
     "@types/react": "~18.0.24",
     "@types/react-native": "~0.70.6",
     "expo": "^47.0.0",
