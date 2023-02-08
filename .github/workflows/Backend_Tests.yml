@@ -1,0 +1,44 @@
+on:
+  push:
+    paths:
+      - 'backend/**'
+
+name: Backend Continuous integration
+
+jobs:
+  check:
+    name: cargo check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: nightly
+      - run: |
+          cd ./backend
+          cargo check
+
+  test:
+    name: cargo test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: nightly
+      - run: |
+          cd ./backend
+          cargo test --all-features
+
+  clippy:
+    name: cargo clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: nightly
+          components: clippy
+      - run: |
+          cd ./backend
+          cargo clippy -- -D warnings -A clippy::let-unit-value
