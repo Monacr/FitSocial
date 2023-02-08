@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
-import {useState } from "react";
+import { useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -7,16 +8,16 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { URI } from "../src/constants";
+import { URI } from "../constants";
 
-export default function LoginScreen() {
+export default function SignUpScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   async function login() {
     try {
-      const resp = await fetch(URI + "/login", {
+      const resp = await fetch(URI + "/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +59,6 @@ export default function LoginScreen() {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
