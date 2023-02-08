@@ -1,3 +1,4 @@
+import React from 'react';
 import { StatusBar } from "expo-status-bar";
 import {useState } from "react";
 import {
@@ -8,6 +9,7 @@ import {
     TouchableOpacity,
 }   from "react-native";
 import { URI } from "../src/constants";
+
 
 export default function SignUpScreen() {
     const [username, setUsername] = useState("");
