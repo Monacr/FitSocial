@@ -5,7 +5,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
-const SignUpScreen = () => {
+const SignUpScreen = (navigation) => {
   return (
     <SafeAreaView style={{ justifyContent: 'center', flex: 1 }}>
       <View style={{paddingHorizontal: 20}}>
@@ -113,9 +113,9 @@ const SignUpScreen = () => {
       </View>
 
       <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-      <Text> New to the App?</Text>
-      <TouchableOpacity onPress={() => {}}>
-        <Text style={{color: '#4287f5', fontSize: 16, marginLeft: 5}}>Sign Up</Text>
+      <Text> Already Registered?</Text>
+      <TouchableOpacity onPress={() => {navigation.goBack() }}>
+        <Text style={{color: '#4287f5', fontSize: 16, marginLeft: 5}}>Log In</Text>
         </TouchableOpacity>
       </View>
       </View>
