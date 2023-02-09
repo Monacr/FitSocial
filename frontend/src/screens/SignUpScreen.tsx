@@ -3,9 +3,18 @@ import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity } fro
 import LoginSVG from 'assets/icon.png';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import LoginScreen from "./SignUpScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import {FC} from 'react';
+import InputField from "../components/inputField";
+
+// interface SwitchingProps {
+//   navigation: any;
+
+// }
 
 
-const SignUpScreen = (navigation) => {
+const SignUpScreen = ({navigation}) => {
   return (
     <SafeAreaView style={{ justifyContent: 'center', flex: 1 }}>
       <View style={{paddingHorizontal: 20}}>
@@ -42,6 +51,23 @@ const SignUpScreen = (navigation) => {
       />
 
       </View>
+
+      <InputField 
+      label={'Full Name'}
+      icon={
+        <Ionicons
+        name='person-outline'
+        size={20}
+        color='#666'
+        style={{marginRight: 5}}
+        />
+
+      }
+      
+      />
+
+
+
 
       <View 
       style={{
@@ -113,8 +139,8 @@ const SignUpScreen = (navigation) => {
       </View>
 
       <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-      <Text> Already Registered?</Text>
-      <TouchableOpacity onPress={() => {navigation.goBack() }}>
+      <Text> Already Signed Up?</Text>
+      <TouchableOpacity onPress={() => {navigation.goBack()}}>
         <Text style={{color: '#4287f5', fontSize: 16, marginLeft: 5}}>Log In</Text>
         </TouchableOpacity>
       </View>
