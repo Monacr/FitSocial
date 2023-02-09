@@ -6,7 +6,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import LoginScreen from "./SignUpScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import {FC} from 'react';
-import InputField from "../components/inputField";
 
 // interface SwitchingProps {
 //   navigation: any;
@@ -27,10 +26,18 @@ const SignUpScreen = ({navigation}) => {
           fontSize: 28,
           fontWeight: '500',
           color: '#333',
-          marginBottom: 10,
+          marginBottom: 50,
         }}>
         Sign Up
       </Text>
+
+
+
+
+
+
+
+
 
       <View 
       style={{
@@ -38,7 +45,36 @@ const SignUpScreen = ({navigation}) => {
         borderBottomColor: '#ccc',
         borderBottomWidth: 1,
         paddingBottom: 5,
-        marginBottom: 10,
+        marginBottom: 20,
+    }}>
+
+
+      <Ionicons name="ios-lock-closed-outline" size={20} color="#666" style={{marginRight: 5
+      }} />
+      <TextInput placeholder='Full Name' 
+      style={{
+      flex:1,
+      paddingVertical:0,
+      }}
+      secureTextEntry={true}
+
+      />
+
+
+      
+      </View>
+
+
+
+
+
+      <View 
+      style={{
+        flexDirection:'row',
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
+        paddingBottom: 5,
+        marginBottom: 20,
     }}>
       <MaterialIcons name="alternate-email" size={20} color="#666" style={{marginRight: 5
       }} />
@@ -52,19 +88,9 @@ const SignUpScreen = ({navigation}) => {
 
       </View>
 
-      <InputField 
-      label={'Full Name'}
-      icon={
-        <Ionicons
-        name='person-outline'
-        size={20}
-        color='#666'
-        style={{marginRight: 5}}
-        />
-
-      }
       
-      />
+
+      
 
 
 
@@ -75,8 +101,10 @@ const SignUpScreen = ({navigation}) => {
         borderBottomColor: '#ccc',
         borderBottomWidth: 1,
         paddingBottom: 5,
-        marginBottom: 10,
+        marginBottom: 20,
     }}>
+
+
       <Ionicons name="ios-lock-closed-outline" size={20} color="#666" style={{marginRight: 5
       }} />
       <TextInput placeholder='Password' 
@@ -85,17 +113,77 @@ const SignUpScreen = ({navigation}) => {
       paddingVertical:0,
       }}
       secureTextEntry={true}
+
       />
-      <TouchableOpacity onPress={() => {}}>
-      <Text style={{color: '#333', fontSize: 12}}>Forgot Password?</Text>
-      </TouchableOpacity>
+
+
+    
       </View>
 
+
+      <View 
+      style={{
+        flexDirection:'row',
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
+        paddingBottom: 5,
+        marginBottom: 20,
+    }}>
+
+
+      <Ionicons name="ios-lock-closed-outline" size={20} color="#666" style={{marginRight: 5
+      }} />
+      <TextInput placeholder='Confirm Password' 
+      style={{
+      flex:1,
+      paddingVertical:0,
+      }}
+      secureTextEntry={true}
+
+      />
+
+
+      
+      </View>
+
+
+
+
+
+      <View 
+      style={{
+        flexDirection:'row',
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
+        paddingBottom: 5,
+        marginBottom: 20,
+    }}>
+
+
+      <Ionicons name="ios-lock-closed-outline" size={20} color="#666" style={{marginRight: 5
+      }} />
+      <TextInput placeholder='Date of Birth'
+      style={{
+      flex:1,
+      paddingVertical:0,
+      }}
+      secureTextEntry={true}
+
+      />
+
+
+      
+      </View>
+
+
+      
+      
+
       <TouchableOpacity onPress={() => {}} style={{backgroundColor:'#4287f5', paddingVertical: 10, alignItems: 'center', borderRadius: 5, marginTop: 20}}>
-        <Text style={{color: '#fff', fontSize: 16}}>Login</Text>
+        <Text style={{color: '#fff', fontSize: 20}}>Sign Up</Text>
       </TouchableOpacity>
 
-      <Text style = {{textAlign: 'center', color: '#333', fontSize: 12, marginTop: 20}}>
+      <Text style = {{textAlign: 'center', color: '#333', fontSize: 12, marginTop: 20, marginBottom: 20,}}>
         Or, login with...
       </Text>
 
@@ -107,7 +195,8 @@ const SignUpScreen = ({navigation}) => {
       borderWidth:2,
       borderRadius: 10,
       paddingVertical: 10,
-      paddingHorizontal: 30
+      paddingHorizontal: 30,
+
     }}> 
         <Ionicons name="logo-google" height={24} width = {24}/>
 
