@@ -4,9 +4,10 @@ import LoginSVG from 'assets/icon.png';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SignUpScreen from "./SignUpScreen";
+import { NavigationContainer } from "@react-navigation/native";
 
 
-const LoginScreen = (navigation) => {
+const LoginScreen = ({navigation}) => {
   return (
     <SafeAreaView style={{ justifyContent: 'center', flex: 1 }}>
       <View style={{paddingHorizontal: 20}}>
@@ -61,7 +62,7 @@ const LoginScreen = (navigation) => {
       }}
       secureTextEntry={true}
       />
-      <TouchableOpacity onPress={() => {navigation.navigate{SignUpScreen}}}>
+      <TouchableOpacity onPress={() => {}}>
       <Text style={{color: '#333', fontSize: 12}}>Forgot Password?</Text>
       </TouchableOpacity>
       </View>
