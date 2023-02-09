@@ -1,5 +1,4 @@
 import React from "react";
-<<<<<<< HEAD
 import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity } from "react-native";
 import LoginSVG from 'assets/icon.png';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -9,7 +8,6 @@ import { NavigationContainer } from "@react-navigation/native";
 
 
 const LoginScreen = ({navigation}) => {
-=======
 import {
   StyleSheet,
   Text,
@@ -23,7 +21,6 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const LoginScreen = ({ navigation }) => {
->>>>>>> e884617da39e087dbd6b037052ff5a340345fbaa
   return (
     <SafeAreaView style={{ justifyContent: "center", flex: 1 }}>
       <View style={{ paddingHorizontal: 20 }}>
