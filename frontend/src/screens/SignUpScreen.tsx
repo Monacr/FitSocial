@@ -21,6 +21,11 @@ const SignUpScreen = ({ navigation }) => {
   const signup = () => {
     if (password != confirmPass) {
       alert("Passwords don't match up");
+      return;
+    }
+    if (name == "" || email == "" || password == "") {
+      alert("Please fill in all the fields");
+      return;
     }
 
     const data: Signup = {
@@ -34,7 +39,7 @@ const SignUpScreen = ({ navigation }) => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((res) => alert(res))
+      .then((res) => alert("Signed up successfully!"))
       .catch((err) => console.error(err));
   };
 

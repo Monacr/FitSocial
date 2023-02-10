@@ -100,7 +100,7 @@ const LoginScreen = ({navigation}) => {
       paddingVertical: 10,
       paddingHorizontal: 30
     }}> 
-        <Ionicons name="logo-google" height={24} width = {24}/>
+        <Ionicons name="logo-google" size={24}/>
 
       </TouchableOpacity>
 
@@ -112,7 +112,7 @@ const LoginScreen = ({navigation}) => {
       paddingVertical: 10,
       paddingHorizontal: 30
     }}> 
-        <Ionicons name="logo-google" height={24} width = {24}/>
+        <Ionicons name="logo-google" size={24}/>
 
       </TouchableOpacity>
 
@@ -124,7 +124,7 @@ const LoginScreen = ({navigation}) => {
       paddingVertical: 10,
       paddingHorizontal: 30
     }}> 
-        <Ionicons name="logo-google" height={24} width = {24}/>
+        <Ionicons name="logo-google" size={24}/>
 
       </TouchableOpacity>
       </View>
