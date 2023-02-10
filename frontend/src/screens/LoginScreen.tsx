@@ -130,7 +130,7 @@ const LoginScreen = ({navigation}) => {
       </View>
 
       <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-      <Text> Already Signed Up?</Text>
+      <Text> New User? Sign Up!</Text>
       <TouchableOpacity onPress={() => {navigation.navigate('SignUp')}}>
         <Text style={{color: '#4287f5', fontSize: 16, marginLeft: 5}}>Log In</Text>
         </TouchableOpacity>
