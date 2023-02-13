@@ -82,7 +82,7 @@ const LoginScreen = ({navigation}) => {
       </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={() => {}} style={{backgroundColor:'#4287f5', paddingVertical: 10, alignItems: 'center', borderRadius: 5, marginTop: 20}}>
+      <TouchableOpacity onPress={() => {navigation.navigate('Home')}} style={{backgroundColor:'#4287f5', paddingVertical: 10, alignItems: 'center', borderRadius: 5, marginTop: 20}}>
         <Text style={{color: '#fff', fontSize: 16}}>Login</Text>
       </TouchableOpacity>
 
@@ -134,8 +134,12 @@ const LoginScreen = ({navigation}) => {
       <TouchableOpacity onPress={() => {navigation.navigate('SignUp')}}>
         <Text style={{color: '#4287f5', fontSize: 16, marginLeft: 5}}>Log In</Text>
         </TouchableOpacity>
+
+        
       </View>
       </View>
+      
+
     </SafeAreaView>
   );
 };
