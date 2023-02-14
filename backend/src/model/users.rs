@@ -6,6 +6,7 @@ use crate::store::{Creatable, Store, TryTake, Updatable};
 use argon2::{self, Config};
 use maplit::btreemap;
 use rand::{distributions::Alphanumeric, Rng};
+use rocket::futures::TryStreamExt;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 use std::collections::BTreeMap;
@@ -147,11 +148,21 @@ impl Updatable for UserUpdate {}
 pub struct UserController;
 
 impl UserController {
-    const TABLE: &'static str = "user";
-    const AUTH_TABLE: &'static str = "auth";
+    pub const TABLE: &'static str = "user";
+    pub const AUTH_TABLE: &'static str = "auth";
 
     pub async fn get(store: &Store, id: &str) -> Result<User, Error> {
         store.exec_get(id).await
+    }
+
+    pub async fn get_by_email(store: &Store, email: &str) -> Result<User, Error> {
+        let filter = btreemap! {"email".to_string() => email.to_string()};
+        store
+            .exec_select_all(Self::TABLE, Some(filter))
+            .await?
+            .into_iter()
+            .next()
+            .ok_or(Error::StoreFailToGet(email.to_string()))
     }
 
     pub async fn update(
@@ -195,6 +206,10 @@ impl UserController {
     }
 
     pub async fn signup(store: &Store, data: Signup) -> Result<MutateResultData, Error> {
+        if Self::get_by_email(store, &data.email).await.is_ok() {
+            return Err(Error::InvalidData);
+        }
+
         let create = UserCreate {
             name: data.name.clone(),
             email: data.email,
@@ -215,7 +230,7 @@ impl UserController {
     }
 
     pub async fn select_all(store: &Store) -> Result<Vec<User>, Error> {
-        store.exec_select_all(Self::TABLE).await
+        store.exec_select_all(Self::TABLE, None).await
     }
 
     fn password_hash(password: &str) -> Result<String, Error> {
@@ -287,6 +302,28 @@ mod tests {
             .expect("Creating a user failed");
 
         let res = UserController::get(&store, &res.id)
+            .await
+            .expect("Getting user failed");
+
+        assert_eq!(res.name, "user");
+        assert_eq!(res.email, "user@gmail.com");
+    }
+
+    #[tokio::test]
+    async fn get_with_email() {
+        let store = Store::try_new_memory().await.unwrap();
+
+        let new_user = Signup {
+            name: "user".to_string(),
+            email: "user@gmail.com".to_string(),
+            password: "password".to_string(),
+        };
+
+        let res = UserController::signup(&store, new_user)
+            .await
+            .expect("Creating a user failed");
+
+        let res = UserController::get_by_email(&store, "user@gmail.com")
             .await
             .expect("Getting user failed");
 
