@@ -4,6 +4,7 @@
 //! update, and delete
 use crate::model::MutateResultData;
 use crate::prelude::*;
+use std::collections::BTreeMap;
 
 use maplit::btreemap;
 use surrealdb::sql::{thing, Array, Datetime, Object, Value};
@@ -60,7 +61,7 @@ impl Store {
             .into_iter()
             .next()
             .map(|r| r.result)
-            .expect("Did not get a response")?
+            .ok_or(Error::StoreError)??
             .first();
 
         if Value::None == first_res {
@@ -173,17 +174,30 @@ impl Store {
         }
     }
 
-    pub async fn exec_select_all<T>(&self, tb: &str) -> Result<Vec<T>, Error>
+    /// Selects all from a table and filters based on mappings between field names and values
+    pub async fn exec_select_all<T>(
+        &self,
+        tb: &str,
+        filter: Option<BTreeMap<String, String>>,
+    ) -> Result<Vec<T>, Error>
     where
         T: TryFrom<Object, Error = Error>,
     {
-        let sql = "SELECT * FROM type::table($tb) ORDER ctime DESC";
-
+        let mut sql = "SELECT * FROM type::table($tb)".to_string();
         let vars = btreemap! {
             "tb".into() => tb.into()
         };
 
-        let ress = self.ds.execute(sql, &self.ses, Some(vars), true).await?;
+        let filter = filter.unwrap_or(BTreeMap::new());
+        for (i, (field, value)) in filter.into_iter().enumerate() {
+            if i == 0 {
+                sql += &format!(" WHERE {field} = '{value}'");
+            } else {
+                sql += &format!(" AND {field} = '{value}'");
+            }
+        }
+        sql += " ORDER ctime DESC";
+        let ress = self.ds.execute(&sql, &self.ses, Some(vars), true).await?;
 
         // First result should be an array of objects
         let first_res = ress
