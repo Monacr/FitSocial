@@ -9,7 +9,7 @@ import {
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Signup } from "../bindings/Signup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { URI } from "../constants";
 
 const SignUpScreen = ({ navigation }) => {
@@ -17,16 +17,84 @@ const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPassError, setConfirmPassError] = useState("");
+
+
+  const isPasswordValid = () => {
+    if (password.length < 8) {
+      alert("Password must be at least 8 characters long");
+      return false;
+    }
+    if (password.length > 20) {
+      alert("Password must be at most 20 characters long");
+      return false;
+    }
+    if (password.includes(" ")) {
+      alert("Password cannot contain spaces");
+      return false;
+    }
+    if (password !== confirmPass) {
+      alert("Passwords do not match");
+      return false;
+    }
+    return true;
+  }
+
+  const isEmailValid = () => {
+    // regex from https://stackoverflow.com/a/46181/1098564
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!re.test(email)) {
+      alert("Please enter a valid email address");
+      return false;
+    }
+    return true;
+  }
+
+
+
+  useEffect(() => {
+    isNameValid(false);
+  }, [name]);
+  const isNameValid = (isSubmitting: boolean) => {
+
+    if (name == "") {
+      if (isSubmitting) {
+        setNameError("Name cannot be empty");
+      } else {
+        setNameError("");
+      }
+      return false;
+    }
+
+    if (name.length < 3) {
+      setNameError("Name must be at least 3 characters long");
+      return false;
+    }
+    if (name.length > 20) {
+      setNameError("Name must be at most 20 characters long");
+      return false;
+    }
+    if (name.includes(" ")) {
+      setNameError("Name cannot contain spaces");
+      return false;
+    }
+    setNameError("");
+    return true;
+  }
 
   const signup = () => {
-    if (password != confirmPass) {
-      alert("Passwords don't match up");
+    if (!(isNameValid(true) && isEmailValid() && isPasswordValid())) {
       return;
+      // checks if empty too
     }
-    if (name == "" || email == "" || password == "") {
-      alert("Please fill in all the fields");
-      return;
-    }
+
+    
+    
+
+
 
     const data: Signup = {
       name,
@@ -66,6 +134,10 @@ const SignUpScreen = ({ navigation }) => {
             secureTextEntry={true}
             onChangeText={setName}
           />
+          {nameError.length > 0 && (
+            <Text style={style.error}>{nameError}</Text>
+          )
+            }
         </View>
 
         <View style={style.bar}>
@@ -187,6 +259,12 @@ const style = StyleSheet.create({
     paddingBottom: 5,
     marginBottom: 20,
   },
+  error: {
+    color: "red", fontSize: 12
+  }
+
 });
+
+
 
 export default SignUpScreen;

@@ -5,10 +5,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { NavigationContainer } from "@react-navigation/native";
 import {FC} from 'react';
-// interface SwitchingProps {
-//   navigation: any;
 
-// }
 
 
 const LoginScreen = ({navigation}) => {
@@ -82,7 +79,7 @@ const LoginScreen = ({navigation}) => {
       </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={() => {navigation.navigate('Home')}} style={{backgroundColor:'#4287f5', paddingVertical: 10, alignItems: 'center', borderRadius: 5, marginTop: 20}}>
+      <TouchableOpacity onPress={() => {}} style={{backgroundColor:'#4287f5', paddingVertical: 10, alignItems: 'center', borderRadius: 5, marginTop: 20}}>
         <Text style={{color: '#fff', fontSize: 16}}>Login</Text>
       </TouchableOpacity>
 
@@ -90,56 +87,13 @@ const LoginScreen = ({navigation}) => {
         Or, login with...
       </Text>
 
-      <View style = {{flexDirection: 'row', justifyContent:'space-between', marginBottom: 30}}>
-        
-        <TouchableOpacity onPress={() => {}} 
-      style={{
-      borderColor: '#ddd',
-      borderWidth:2,
-      borderRadius: 10,
-      paddingVertical: 10,
-      paddingHorizontal: 30
-    }}> 
-        <Ionicons name="logo-google" size={24}/>
-
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => {}} 
-      style={{
-      borderColor: '#ddd',
-      borderWidth:2,
-      borderRadius: 10,
-      paddingVertical: 10,
-      paddingHorizontal: 30
-    }}> 
-        <Ionicons name="logo-google" size={24}/>
-
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => {}} 
-      style={{
-      borderColor: '#ddd',
-      borderWidth:2,
-      borderRadius: 10,
-      paddingVertical: 10,
-      paddingHorizontal: 30
-    }}> 
-        <Ionicons name="logo-google" size={24}/>
-
-      </TouchableOpacity>
-      </View>
-
       <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-      <Text> New User? Sign Up!</Text>
+      <Text> Already Signed Up?</Text>
       <TouchableOpacity onPress={() => {navigation.navigate('SignUp')}}>
         <Text style={{color: '#4287f5', fontSize: 16, marginLeft: 5}}>Log In</Text>
         </TouchableOpacity>
-
-        
       </View>
       </View>
-      
-
     </SafeAreaView>
   );
 };
