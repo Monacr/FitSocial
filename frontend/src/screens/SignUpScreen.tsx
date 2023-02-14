@@ -22,44 +22,96 @@ const SignUpScreen = ({ navigation }) => {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPassError, setConfirmPassError] = useState("");
 
+  useEffect(() => {
+    isConfirmPassValid(false);
+  }, [confirmPass]);
+  const isConfirmPassValid = (isSubmitting: boolean) => {
+    if (confirmPass == "") {
+      if (isSubmitting) {
+        setConfirmPassError("Password cannot be empty");
+      } else {
+        setConfirmPassError("");
+      }
+      return false;
+    }
+    if (confirmPass.length < 8) {
+      setConfirmPassError("Password must be at least 8 characters long");
+      return false;
+    }
+    if (confirmPass.length > 20) {
+      setConfirmPassError("Password must be at most 20 characters long");
+      return false;
+    }
+    if (confirmPass.includes(" ")) {
+      setConfirmPassError("Password cannot contain spaces");
+      return false;
+    }
+    if (confirmPass !== password) {
+      setConfirmPassError("Passwords do not match");
+      return false;
+    }
+    return true;
+  };
 
-  const isPasswordValid = () => {
+
+  useEffect(() => {
+    isPasswordValid(false);
+  }, [password]);
+  const isPasswordValid = (isSubmitting: boolean) => {
+
+    if (password == "") {
+      if (isSubmitting) {
+        setPasswordError("Password cannot be empty");
+      } else {
+        setPasswordError("");
+      }
+      return false;
+    }
     if (password.length < 8) {
-      alert("Password must be at least 8 characters long");
+      setPasswordError("Password must be at least 8 characters long");
       return false;
     }
     if (password.length > 20) {
-      alert("Password must be at most 20 characters long");
+      setPasswordError("Password must be at most 20 characters long");
       return false;
     }
     if (password.includes(" ")) {
-      alert("Password cannot contain spaces");
+      setPasswordError("Password cannot contain spaces");
       return false;
     }
     if (password !== confirmPass) {
-      alert("Passwords do not match");
+      setPasswordError("Passwords do not match");
       return false;
     }
     return true;
-  }
+  };
 
-  const isEmailValid = () => {
+  useEffect(() => {
+    isEmailValid(false);
+  }, [email]);
+  const isEmailValid = (isSubmitting: boolean) => {
     // regex from https://stackoverflow.com/a/46181/1098564
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const re =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(email)) {
-      alert("Please enter a valid email address");
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+    if (email == "") {
+      if (isSubmitting) {
+        setEmail("Email cannot be empty");
+      } else {
+        setEmail("");
+      }
       return false;
     }
     return true;
-  }
-
-
+  };
 
   useEffect(() => {
     isNameValid(false);
   }, [name]);
   const isNameValid = (isSubmitting: boolean) => {
-
     if (name == "") {
       if (isSubmitting) {
         setNameError("Name cannot be empty");
@@ -68,7 +120,6 @@ const SignUpScreen = ({ navigation }) => {
       }
       return false;
     }
-
     if (name.length < 3) {
       setNameError("Name must be at least 3 characters long");
       return false;
@@ -81,20 +132,15 @@ const SignUpScreen = ({ navigation }) => {
       setNameError("Name cannot contain spaces");
       return false;
     }
-    setNameError("");
+    
     return true;
-  }
+  
+  };
 
   const signup = () => {
-    if (!(isNameValid(true) && isEmailValid() && isPasswordValid())) {
+    if (!(isNameValid(true) && isEmailValid(true) && isPasswordValid(true)) && isConfirmPassValid(true)) {
       return;
-      // checks if empty too
     }
-
-    
-    
-
-
 
     const data: Signup = {
       name,
@@ -131,13 +177,10 @@ const SignUpScreen = ({ navigation }) => {
               flex: 1,
               paddingVertical: 0,
             }}
-            secureTextEntry={true}
+            secureTextEntry={false}
             onChangeText={setName}
           />
-          {nameError.length > 0 && (
-            <Text style={style.error}>{nameError}</Text>
-          )
-            }
+          {nameError.length > 0 && <Text style={style.error}>{nameError}</Text>}
         </View>
 
         <View style={style.bar}>
@@ -158,6 +201,7 @@ const SignUpScreen = ({ navigation }) => {
             keyboardType="email-address"
             onChangeText={setEmail}
           />
+          {emailError.length > 0 && ( <Text style={style.error}>{emailError}</Text>)}
         </View>
 
         <View style={style.bar}>
@@ -178,6 +222,7 @@ const SignUpScreen = ({ navigation }) => {
             secureTextEntry={true}
             onChangeText={setPassword}
           />
+          {passwordError.length > 0 && ( <Text style={style.error}>{passwordError}</Text>)}
         </View>
 
         <View style={style.bar}>
@@ -198,6 +243,7 @@ const SignUpScreen = ({ navigation }) => {
             secureTextEntry={true}
             onChangeText={setConfirmPass}
           />
+          {confirmPassError.length > 0 && ( <Text style={style.error}>{confirmPassError}</Text>)}
         </View>
 
         <TouchableOpacity
@@ -260,11 +306,9 @@ const style = StyleSheet.create({
     marginBottom: 20,
   },
   error: {
-    color: "red", fontSize: 12
-  }
-
+    color: "red",
+    fontSize: 12,
+  },
 });
-
-
 
 export default SignUpScreen;
