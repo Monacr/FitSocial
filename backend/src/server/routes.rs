@@ -8,8 +8,15 @@ use rocket::http::{Cookie, CookieJar};
 use rocket::{serde::json::Json, State};
 
 #[get("/users/<name>")]
-pub async fn get_user(name: &str, store: &State<Store>) -> Result<Json<User>, Error> {
-    UserController::get_by_name(store, name)
+pub async fn get_user_by_name(name: &str, store: &State<Store>) -> Result<Json<User>, Error> {
+    UserController::get(store, &format!("{}:{name}", UserController::TABLE))
+        .await
+        .map(|user| user.into())
+}
+
+#[get("/users/email/<email>")]
+pub async fn get_user_by_email(email: &str, store: &State<Store>) -> Result<Json<User>, Error> {
+    UserController::get_by_email(store, email)
         .await
         .map(|user| user.into())
 }

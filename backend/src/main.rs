@@ -30,7 +30,8 @@ async fn main() -> Result<(), rocket::Error> {
             "/",
             routes![
                 message,
-                get_user,
+                get_user_by_name,
+                get_user_by_email,
                 get_users,
                 signup,
                 user_update,
