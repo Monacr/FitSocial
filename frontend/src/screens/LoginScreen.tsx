@@ -79,7 +79,7 @@ const LoginScreen = ({navigation}) => {
       </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={() => {}} style={{backgroundColor:'#4287f5', paddingVertical: 10, alignItems: 'center', borderRadius: 5, marginTop: 20}}>
+      <TouchableOpacity onPress={() => {navigation.navigate('Home')}} style={{backgroundColor:'#4287f5', paddingVertical: 10, alignItems: 'center', borderRadius: 5, marginTop: 20}}>
         <Text style={{color: '#fff', fontSize: 16}}>Login</Text>
       </TouchableOpacity>
 
