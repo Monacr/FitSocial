@@ -150,7 +150,7 @@ impl UserController {
     const TABLE: &'static str = "user";
     const AUTH_TABLE: &'static str = "auth";
 
-    pub async fn get(store: &Store, id: &str) -> Result<User, Error> {
+    pub async fn get_by_name(store: &Store, name: &str) -> Result<User, Error> {
         store.exec_get(id).await
     }
 

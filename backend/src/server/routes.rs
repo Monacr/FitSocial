@@ -7,9 +7,11 @@ use crate::store::Store;
 use rocket::http::{Cookie, CookieJar};
 use rocket::{serde::json::Json, State};
 
-#[get("/users/<id>")]
-pub async fn get_user(id: &str, store: &State<Store>) -> Result<Json<User>, Error> {
-    UserController::get(store, id).await.map(|user| user.into())
+#[get("/users/<name>")]
+pub async fn get_user(name: &str, store: &State<Store>) -> Result<Json<User>, Error> {
+    UserController::get_by_name(store, name)
+        .await
+        .map(|user| user.into())
 }
 
 #[get("/users")]
