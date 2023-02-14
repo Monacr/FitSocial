@@ -206,9 +206,8 @@ impl UserController {
     }
 
     pub async fn signup(store: &Store, data: Signup) -> Result<MutateResultData, Error> {
-        match Self::get_by_email(store, &data.email).await {
-            Ok(_) => return Err(Error::InvalidData),
-            _ => {}
+        if Self::get_by_email(store, &data.email).await.is_ok() {
+            return Err(Error::InvalidData);
         }
 
         let create = UserCreate {
