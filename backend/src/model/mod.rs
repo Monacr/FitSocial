@@ -23,3 +23,4 @@ impl From<String> for MutateResultData {
         MutateResultData { id }
     }
 }
+

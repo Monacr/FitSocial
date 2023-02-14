@@ -37,6 +37,9 @@ pub enum Error {
 
     #[error("Unknown store error")]
     StoreError,
+
+    #[error("Provided data is invalid")]
+    InvalidData,
 }
 
 impl<'a> Responder<'a, 'static> for Error {
