@@ -35,3 +35,17 @@ npm start
 ```
 
 You can then press `w` to view the UI locally on the web, or scan the QR code or click on the entry in Expo Go to run on mobile.
+
+## Testing
+
+You can test the backend by going to the [backend](./backend) and running 
+
+```shell
+cargo test
+```
+
+You can test if the frontend builds by going to the [frontend](./frontend) and running 
+
+```shell
+npm run build --if-present
+```
