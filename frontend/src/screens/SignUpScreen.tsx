@@ -164,7 +164,7 @@ const SignUpScreen = ({ navigation }) => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((_) => navigation.navigate("Home"))
+      .then((_) => navigation.navigate("HomeStack"))
       .catch((err) => console.error(err));
   };
 
