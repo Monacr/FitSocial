@@ -92,10 +92,9 @@ const LoginScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-<<<<<<< HEAD
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Home");
+            navigation.navigate("HomeStack");
           }}
           style={{
             backgroundColor: "#4287f5",
@@ -106,51 +105,6 @@ const LoginScreen = ({ navigation }) => {
           }}
         >
           <Text style={{ color: "#fff", fontSize: 16 }}>Login</Text>
-=======
-
-
-
-      <View 
-      style={{
-        flexDirection:'row',
-        borderBottomColor: '#ccc',
-        borderBottomWidth: 1,
-        paddingBottom: 5,
-        marginBottom: 10,
-    }}>
-
-
-
-      <Ionicons name="ios-lock-closed-outline" size={20} color="#666" style={{marginRight: 5
-      }} />
-      <TextInput placeholder='Password' 
-      style={{
-      flex:1,
-      paddingVertical:0,
-      }}
-      secureTextEntry={true}
-      />
-
-
-
-      <TouchableOpacity onPress={() => {}}>
-      <Text style={{color: '#333', fontSize: 12}}>Forgot Password?</Text>
-      </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity onPress={() => {navigation.navigate('Home')}} style={{backgroundColor:'#4287f5', paddingVertical: 10, alignItems: 'center', borderRadius: 5, marginTop: 20}}>
-        <Text style={{color: '#fff', fontSize: 16}}>Login</Text>
-      </TouchableOpacity>
-
-      <Text style = {{textAlign: 'center', color: '#333', fontSize: 12, marginTop: 20, marginBottom:15}}>
-        Or, login with...
-      </Text>
-
-      <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-      <Text> Already Signed Up?</Text>
-      <TouchableOpacity onPress={() => {navigation.navigate('SignUp')}}>
-        <Text style={{color: '#4287f5', fontSize: 16, marginLeft: 5}}>Log In</Text>
->>>>>>> 22c67ae788debbeba13f90a3f9bcdff3decb3e77
         </TouchableOpacity>
 
         <Text
