@@ -93,7 +93,7 @@ const LoginScreen = ({ navigation }) => {
         </View>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Home");
+            navigation.navigate("HomeStack");
           }}
           style={{
             backgroundColor: "#4287f5",
