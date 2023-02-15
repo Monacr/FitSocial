@@ -91,7 +91,6 @@ const LoginScreen = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         </View>
-
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("HomeStack");

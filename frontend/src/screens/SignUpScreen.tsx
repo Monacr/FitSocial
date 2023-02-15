@@ -23,15 +23,12 @@ const SignUpScreen = ({ navigation }) => {
   const [confirmPassError, setConfirmPassError] = useState("");
 
   useEffect(() => {
-    isConfirmPassValid(false);
+    isConfirmPassValid();
   }, [confirmPass]);
-  const isConfirmPassValid = (isSubmitting: boolean) => {
+
+  const isConfirmPassValid = () => {
     if (confirmPass == "") {
-      if (isSubmitting) {
-        setConfirmPassError("Password cannot be empty");
-      } else {
-        setConfirmPassError("");
-      }
+      setConfirmPassError("Password cannot be empty");
       return false;
     }
     if (confirmPass.length < 8) {
@@ -53,20 +50,15 @@ const SignUpScreen = ({ navigation }) => {
     return true;
   };
 
-
   useEffect(() => {
-    isPasswordValid(false);
+    isPasswordValid();
   }, [password]);
-  const isPasswordValid = (isSubmitting: boolean) => {
 
+  const isPasswordValid = () => {
     if (password == "") {
-      if (isSubmitting) {
-        setPasswordError("Password cannot be empty");
-      } else {
-        setPasswordError("");
-      }
-      return false;
+      setPasswordError("");
     }
+
     if (password.length < 8) {
       setPasswordError("Password must be at least 8 characters long");
       return false;
@@ -87,9 +79,9 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    isEmailValid(false);
+    isEmailValid();
   }, [email]);
-  const isEmailValid = (isSubmitting: boolean) => {
+  const isEmailValid = () => {
     // regex from https://stackoverflow.com/a/46181/1098564
     const re =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -98,26 +90,18 @@ const SignUpScreen = ({ navigation }) => {
       return false;
     }
     if (email == "") {
-      if (isSubmitting) {
-        setEmail("Email cannot be empty");
-      } else {
-        setEmail("");
-      }
+      setEmailError("");
       return false;
     }
     return true;
   };
 
   useEffect(() => {
-    isNameValid(false);
+    isNameValid();
   }, [name]);
-  const isNameValid = (isSubmitting: boolean) => {
+  const isNameValid = () => {
     if (name == "") {
-      if (isSubmitting) {
-        setNameError("Name cannot be empty");
-      } else {
-        setNameError("");
-      }
+      setNameError("");
       return false;
     }
     if (name.length < 3) {
@@ -132,13 +116,15 @@ const SignUpScreen = ({ navigation }) => {
       setNameError("Name cannot contain spaces");
       return false;
     }
-    
+
     return true;
-  
   };
 
   const signup = () => {
-    if (!(isNameValid(true) && isEmailValid(true) && isPasswordValid(true)) && isConfirmPassValid(true)) {
+    if (
+      !(isNameValid() && isEmailValid() && isPasswordValid()) &&
+      isConfirmPassValid()
+    ) {
       return;
     }
 
@@ -201,7 +187,9 @@ const SignUpScreen = ({ navigation }) => {
             keyboardType="email-address"
             onChangeText={setEmail}
           />
-          {emailError.length > 0 && ( <Text style={style.error}>{emailError}</Text>)}
+          {emailError.length > 0 && (
+            <Text style={style.error}>{emailError}</Text>
+          )}
         </View>
 
         <View style={style.bar}>
@@ -222,7 +210,9 @@ const SignUpScreen = ({ navigation }) => {
             secureTextEntry={true}
             onChangeText={setPassword}
           />
-          {passwordError.length > 0 && ( <Text style={style.error}>{passwordError}</Text>)}
+          {passwordError.length > 0 && (
+            <Text style={style.error}>{passwordError}</Text>
+          )}
         </View>
 
         <View style={style.bar}>
@@ -243,7 +233,9 @@ const SignUpScreen = ({ navigation }) => {
             secureTextEntry={true}
             onChangeText={setConfirmPass}
           />
-          {confirmPassError.length > 0 && ( <Text style={style.error}>{confirmPassError}</Text>)}
+          {confirmPassError.length > 0 && (
+            <Text style={style.error}>{confirmPassError}</Text>
+          )}
         </View>
 
         <TouchableOpacity
