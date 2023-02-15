@@ -21,110 +21,135 @@ const SignUpScreen = ({ navigation }) => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPassError, setConfirmPassError] = useState("");
+  const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
-    isConfirmPassValid();
+    const err = getConfirmPassError();
+    if (err !== null) {
+      setConfirmPassError(err);
+    } else {
+      setConfirmPassError("");
+    }
   }, [confirmPass]);
 
-  const isConfirmPassValid = () => {
+  const getConfirmPassError = (): string | null => {
     if (confirmPass == "") {
-      setConfirmPassError("Password cannot be empty");
-      return false;
+      return "";
     }
-    if (confirmPass.length < 8) {
-      setConfirmPassError("Password must be at least 8 characters long");
-      return false;
-    }
-    if (confirmPass.length > 20) {
-      setConfirmPassError("Password must be at most 20 characters long");
-      return false;
-    }
-    if (confirmPass.includes(" ")) {
-      setConfirmPassError("Password cannot contain spaces");
-      return false;
-    }
+
     if (confirmPass !== password) {
-      setConfirmPassError("Passwords do not match");
-      return false;
+      return "Passwords do not match";
     }
-    return true;
+
+    return null;
   };
 
   useEffect(() => {
-    isPasswordValid();
+    const err = getPasswordError();
+    if (err !== null) {
+      setPasswordError(err);
+    } else {
+      setPasswordError("");
+    }
   }, [password]);
 
-  const isPasswordValid = () => {
+  const getPasswordError = (): string | null => {
     if (password == "") {
-      setPasswordError("");
+      return "";
     }
 
     if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters long");
-      return false;
+      return "Password must be at least 8 characters long";
     }
     if (password.length > 20) {
-      setPasswordError("Password must be at most 20 characters long");
-      return false;
+      return "Password must be at most 20 characters long";
     }
     if (password.includes(" ")) {
-      setPasswordError("Password cannot contain spaces");
-      return false;
+      return "Password cannot contain spaces";
     }
-    if (password !== confirmPass) {
-      setPasswordError("Passwords do not match");
-      return false;
-    }
-    return true;
+    return null;
   };
 
   useEffect(() => {
-    isEmailValid();
+    const setError = async () => {
+      const err = await getEmailError();
+      if (err !== null) {
+        setEmailError(err);
+      } else {
+        setEmailError("");
+      }
+    };
+    setError();
   }, [email]);
-  const isEmailValid = () => {
+
+  const getEmailError = async (): Promise<string | null> => {
+    if (email == "") {
+      return "";
+    }
     // regex from https://stackoverflow.com/a/46181/1098564
     const re =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(email)) {
-      setEmailError("Please enter a valid email address");
-      return false;
+      return "Please enter a valid email address";
     }
-    if (email == "") {
-      setEmailError("");
-      return false;
+
+    // Check if email already exists
+    try {
+      const res = await fetch(URI + "/users/get/email/" + email);
+      if (res.ok) {
+        return "email has been taken";
+      } else {
+        return null;
+      }
+    } catch (_) {
+      return null;
     }
-    return true;
   };
 
   useEffect(() => {
-    isNameValid();
+    const setError = async () => {
+      const err = await getNameError();
+      if (err !== null) {
+        setNameError(err);
+      } else {
+        setNameError("");
+      }
+    };
+    setError();
   }, [name]);
-  const isNameValid = () => {
+
+  const getNameError = async (): Promise<string | null> => {
     if (name == "") {
-      setNameError("");
-      return false;
-    }
-    if (name.length < 3) {
-      setNameError("Name must be at least 3 characters long");
-      return false;
-    }
-    if (name.length > 20) {
-      setNameError("Name must be at most 20 characters long");
-      return false;
-    }
-    if (name.includes(" ")) {
-      setNameError("Name cannot contain spaces");
-      return false;
+      return "";
     }
 
-    return true;
+    if (name.length < 3) {
+      return "Name must be at least 3 characters long";
+    }
+
+    if (name.length > 20) {
+      return "Name must be at most 20 characters long";
+    }
+
+    if (name.includes(" ")) {
+      return "Name cannot contain spaces";
+    }
+
+    // Check if username already exists
+    try {
+      const res = await fetch(URI + "/users/get/name/" + name);
+      if (res.ok) {
+        return "username has been taken";
+      } else {
+        return null;
+      }
+    } catch (_) {
+      return null;
+    }
   };
 
   const signup = () => {
-    if (
-      !(isNameValid() && isEmailValid() && isPasswordValid()) &&
-      isConfirmPassValid()
-    ) {
+    if (!isValid) {
       return;
     }
 
@@ -139,9 +164,21 @@ const SignUpScreen = ({ navigation }) => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((res) => alert("Signed up successfully!"))
+      .then((_) => navigation.navigate("Home"))
       .catch((err) => console.error(err));
   };
+
+  useEffect(() => {
+    const setValid = async () => {
+      setIsValid(
+        getConfirmPassError() === null &&
+          getPasswordError() === null &&
+          (await getNameError()) === null &&
+          (await getEmailError()) === null
+      );
+    };
+    setValid();
+  }, [name, password, confirmPass, emailError]);
 
   return (
     <SafeAreaView style={{ justifyContent: "center", flex: 1 }}>
@@ -240,12 +277,14 @@ const SignUpScreen = ({ navigation }) => {
 
         <TouchableOpacity
           onPress={signup}
+          disabled={!isValid}
           style={{
             backgroundColor: "#4287f5",
             paddingVertical: 10,
             alignItems: "center",
             borderRadius: 5,
             marginTop: 20,
+            opacity: isValid ? 1 : 0.7,
           }}
         >
           <Text style={{ color: "#fff", fontSize: 20 }}>Sign Up</Text>

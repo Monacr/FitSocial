@@ -125,7 +125,7 @@ const LoginScreen = ({ navigation }) => {
             alignItems: "center",
           }}
         >
-          <Text> Already Signed Up?</Text>
+          <Text> Don't have an account?</Text>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("SignUp");
