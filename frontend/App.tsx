@@ -5,6 +5,7 @@ import LoginScreen from "./src/screens/LoginScreen";
 import { Text, View } from 'react-native';
 import SignUpScreen from "./src/screens/SignUpScreen";
 import HomeScreen from "./src/screens/HomeScreen";
+import UploadScreen from "./src/screens/UploadScreen";
 import SettingScreen from "./src/screens/SettingScreen";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -18,6 +19,7 @@ function HomeStack() {
   return (
     <Tab.Navigator >
       <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Upload" component={UploadScreen}/>
       <Tab.Screen name="Settings" component={SettingScreen}/>
     </Tab.Navigator>
   );
