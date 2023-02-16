@@ -54,7 +54,7 @@ pub async fn signup(
     Ok(Json(res))
 }
 
-#[post("/users/logout", format = "json")]
+#[post("/logout", format = "json")]
 pub fn logout(jar: &CookieJar<'_>) {
     jar.remove_private(Cookie::named("auth_id"));
 }
@@ -70,16 +70,13 @@ pub async fn user_update(
         .map(|data| data.into())
 }
 
-// TODO: change to something useful
-#[get("/users/<id>/secret")]
-pub async fn get_secret(id: &str, jar: &CookieJar<'_>) -> &'static str {
+#[get("/users/checkAuth")]
+pub async fn check_auth(jar: &CookieJar<'_>) -> Result<(), ()> {
     let auth_id = jar.get_private("auth_id");
 
     if let Some(cookie) = auth_id {
-        if cookie.value() == id {
-            return "secret message !!!!!";
-        }
+        return Ok(());
     }
 
-    "permission denied"
+    Err(())
 }

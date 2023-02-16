@@ -2,7 +2,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FontLoader from "./src/components/FontLoader";
 import LoginScreen from "./src/screens/LoginScreen";
-import { Text, View } from "react-native";
 import SignUpScreen from "./src/screens/SignUpScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import SettingScreen from "./src/screens/SettingScreen";
@@ -16,7 +15,7 @@ const ScreenStack = createNativeStackNavigator();
 
 const Tab = createBottomTabNavigator();
 
-function HomeStack() {
+const HomeStack = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -71,7 +70,7 @@ function HomeStack() {
       />
     </Tab.Navigator>
   );
-}
+};
 
 const Navigator = () => {
   return (

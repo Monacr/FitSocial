@@ -5,10 +5,21 @@ POST http://10.0.0.117:8000/signup
 Content-Type: application/json
 
 {
-        "name":"bro",
-        "email":"yo",
-        "password":"bropassword"
+        "name":"test",
+        "email":"bruh@uw.edu",
+        "password":"test"
 }
+#
+POST http://10.0.0.117:8000/login
+Content-Type: application/json
+
+{
+        "username":"test",
+        "password":"test"
+}
+#
+POST http://10.0.0.117:8000/logout
+Content-Type: application/json
 
 # Create user
 POST http://10.0.0.117:8000/signup
