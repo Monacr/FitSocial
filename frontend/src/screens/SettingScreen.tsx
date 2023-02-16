@@ -12,10 +12,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SettingScreen = ({navigation}) => {
     return(
-        <View style={styles.container}>
-            <Text>These are your settings</Text>
-            <Button onPress={() => navigation.navigate("Login")} title="LogOut"  />
-        </View>
+            <View style={styles.container}>
+                <Text style={styles.topPage}> Fit Social Settings</Text>
+                <View style={styles.buttonContainer}>
+
+                <Button onPress={() => navigation.navigate("Login")} title="Log Out"  />
+                </View>
+            </View>
     );
 };
 
@@ -25,6 +28,17 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'flex-start',
+        paddingTop: 30,
     },
+    topPage: {
+        fontSize: 26,
+        marginTop: 10,
+    },
+    buttonContainer:{
+        marginTop: 500,
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
+
 });

@@ -6,14 +6,12 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
-  Button,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-const AddPostScreen = ({navigation}) => {
+const AddPostScreen = () => {
     return(
         <View style={styles.container}>
-            <Text>This is where you post</Text>
+            <Text>Add Post Screen</Text>
         </View>
     );
 };

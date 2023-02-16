@@ -126,7 +126,7 @@ const LoginScreen = ({ navigation }) => {
             marginTop: 30,
           }}
         >
-          <Text>Don't have an account?</Text>
+          <Text> Don't have an account?</Text>
           <TouchableOpacity
             onPress={() => {
               leavePage("SignUp");
