@@ -106,6 +106,18 @@ const LoginScreen = ({ navigation }) => {
           <Text style={{ color: "#fff", fontSize: 16 }}>Login</Text>
         </TouchableOpacity>
 
+        <Text
+          style={{
+            textAlign: "center",
+            color: "#333",
+            fontSize: 12,
+            marginTop: 20,
+            marginBottom: 15,
+          }}
+        >
+          Or, login with...
+        </Text>
+
         <View
           style={{
             flexDirection: "row",
@@ -113,15 +125,14 @@ const LoginScreen = ({ navigation }) => {
             alignItems: "center",
           }}
         >
-          <Text style={{marginTop: 10}}> Don't have an account?
-          </Text>
+          <Text> Don't have an account?</Text>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("SignUp");
             }}
           >
-            <Text style={{ color: "#4287f5", fontSize: 16, marginLeft: 5, marginTop: 10}}>
-                Sign Up
+            <Text style={{ color: "#4287f5", fontSize: 16, marginLeft: 5 }}>
+              Log In
             </Text>
           </TouchableOpacity>
         </View>

@@ -12,10 +12,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SettingScreen = ({navigation}) => {
     return(
-        
             <View style={styles.container}>
-                <Text>These are your settings</Text>
-                <Button onPress={() => navigation.navigate("Login")} title="LogOut"  />
+                <Text style={styles.topPage}> Fit Social Settings</Text>
+                <Button onPress={() => navigation.navigate("Login")} title="Log Out"  />
             </View>
     );
 };
@@ -28,4 +27,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
+    topPage: {
+        fontSize: 26,
+        paddingTop: 10
+    }
 });

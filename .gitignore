@@ -2,7 +2,7 @@ docs/requirements_and_policies.html
 .log/
 backend/target/
 backend/Cargo.lock
-backend/dev.db
+backend/dev.db/
 
 
 node_modules/

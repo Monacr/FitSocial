@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container, Card, UserInfo, UserImg, UserName, UserInfoText, PostTime, PostText, PostImg, Interaction, InteractionWrapper, Divider, InteractionText} from '../styles/FeedStyles.js';
+import {Container, Card, UserInfo, UserImg, UserName, UserInfoText, PostTime, PostText, PostImg, Interaction, InteractionWrapper, Divider, InteractionText} from '../styles/FeedStyles';
 import Ionicons from "react-native-vector-icons/Ionicons";
 const PostCard = ({item}) =>{
     let likeIcon = item.liked ? 'heart' : 'heart-outline';
