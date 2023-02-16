@@ -14,136 +14,118 @@ import { NavigationContainer } from "@react-navigation/native";
 import { FC } from "react";
 
 const LoginScreen = ({ navigation }) => {
-    return (
-        <SafeAreaView style={{ justifyContent: "center", flex: 1, backgroundColor: '#0B0B3B' }}>
-            <View style={{ paddingHorizontal: 20 }}>
-                <Text
-                    style={{
-                        fontFamily: "Roboto-Medium",
-                        fontSize: 32,
-                        fontWeight: "bold",
-                        color: "#F5C528",
-                        marginBottom: 20,
-                        marginTop: 20,
-                        textAlign: "center",
-                    }}
-                >
-                    Fit Social
-                </Text>
+  return (
+    <SafeAreaView style={{ justifyContent: "center", flex: 1 }}>
+      <View style={{ paddingHorizontal: 20 }}>
+        <View style={{ alignItems: "center" }}>
+          {/* <img src={LoginSVG} alt = "Image" height={300} width={300}/> */}
+        </View>
+        <Text
+          style={{
+            fontFamily: "Roboto-Medium",
+            fontSize: 28,
+            fontWeight: "500",
+            color: "#333",
+            marginBottom: 10,
+          }}
+        >
+          Log In
+        </Text>
 
-                <View style={{ alignItems: "center" }}>
-                    {/* <img src={LoginSVG} alt = "Image" height={300} width={300}/> */}
-                </View>
-                <Text
-                    style={{
-                        fontFamily: "Roboto-Medium",
-                        fontSize: 28,
-                        fontWeight: "500",
-                        color: "#F5C528",
-                        marginBottom: 10,
-                    }}
-                >
-                    Log In
-                </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            borderBottomColor: "#ccc",
+            borderBottomWidth: 1,
+            paddingBottom: 5,
+            marginBottom: 10,
+          }}
+        >
+          <MaterialIcons
+            name="alternate-email"
+            size={20}
+            color="#666"
+            style={{
+              marginRight: 5,
+            }}
+          />
+          <TextInput
+            placeholder="Email ID"
+            style={{
+              flex: 1,
+              paddingVertical: 0,
+            }}
+            keyboardType="email-address"
+          />
+        </View>
 
-                <View
-                    style={{
-                        flexDirection: "row",
-                        borderBottomColor: "#ccc",
-                        borderBottomWidth: 1,
-                        paddingBottom: 5,
-                        marginBottom: 10,
-                    }}
-                >
-                    <MaterialIcons
-                        name="alternate-email"
-                        size={20}
-                        color="#666"
-                        style={{
-                            marginRight: 5,
-                        }}
-                    />
-                    <TextInput
-                        placeholder="Email ID"
-                        style={{
-                            flex: 1,
-                            paddingVertical: 0,
-                            color: "#F5C528",
-                        }}
-                        keyboardType="email-address"
-                        placeholderTextColor="#ccc"
-                    />
-                </View>
+        <View
+          style={{
+            flexDirection: "row",
+            borderBottomColor: "#ccc",
+            borderBottomWidth: 1,
+            paddingBottom: 5,
+            marginBottom: 10,
+          }}
+        >
+          <Ionicons
+            name="ios-lock-closed-outline"
+            size={20}
+            color="#666"
+            style={{
+              marginRight: 5,
+            }}
+          />
+          <TextInput
+            placeholder="Password"
+            style={{
+              flex: 1,
+              paddingVertical: 0,
+            }}
+            secureTextEntry={true}
+          />
 
-                <View
-                    style={{
-                        flexDirection: "row",
-                        borderBottomColor: "#ccc",
-                        borderBottomWidth: 1,
-                        paddingBottom: 5,
-                        marginBottom: 10,
-                    }}
-                >
-                    <Ionicons
-                        name="ios-lock-closed-outline"
-                        size={20}
-                        color="#666"
-                        style={{
-                            marginRight: 5,
-                        }}
-                    />
-                    <TextInput
-                        placeholder="Password"
-                        style={{
-                            flex: 1,
-                            paddingVertical: 0,
-                            color: "#F5C528",
-                        }}
-                        secureTextEntry={true}
-                        placeholderTextColor="#ccc"
-                    />
+          <TouchableOpacity onPress={() => {}}>
+            <Text style={{ color: "#333", fontSize: 12 }}>
+              Forgot Password?
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("HomeStack");
+          }}
+          style={{
+            backgroundColor: "#4287f5",
+            paddingVertical: 10,
+            alignItems: "center",
+            borderRadius: 5,
+            marginTop: 20,
+          }}
+        >
+          <Text style={{ color: "#fff", fontSize: 16 }}>Login</Text>
+        </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => {}}>
-                        <Text style={{ color: "#F5C528", fontSize: 12 }}>
-                            Forgot Password?
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                <TouchableOpacity
-                    onPress={() => {
-                        navigation.navigate("HomeStack");
-                    }}
-                    style={{
-                        backgroundColor: "#F5C528",
-                        paddingVertical: 10,
-                        alignItems: "center",
-                        borderRadius: 5,
-                        marginTop: 20,
-                    }}
-                >
-                    <Text style={{ color: "#0B0B3B", fontSize: 16 }}>Login</Text>
-                </TouchableOpacity>
+        <Text
+          style={{
+            textAlign: "center",
+            color: "#333",
+            fontSize: 12,
+            marginTop: 20,
+            marginBottom: 15,
+          }}
+        >
+          Or, login with...
+        </Text>
 
-                <Text
-                    style={{
-                        textAlign: "center",
-                        color: "#F5C528",
-                        fontSize: 12,
-                        marginTop: 20,
-                        marginBottom: 15,
-                    }}
-                >
-                    Or, login with...
-                </Text>
-
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    <Text style={{ color: "#F5C528" }}> Don't have an account?</Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text> Don't have an account?</Text>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("SignUp");

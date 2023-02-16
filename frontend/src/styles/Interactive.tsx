@@ -6,7 +6,7 @@ export const interactive = StyleSheet.create({
     fontSize: 28,
     fontWeight: "500",
     color: "#333",
-    marginBottom: 50,
+    marginBottom: 40,
   },
   bar: {
     flexDirection: "row",
@@ -26,5 +26,5 @@ export const interactive = StyleSheet.create({
     borderRadius: 5,
     marginTop: 20,
   },
-  textButton: { color: "#4287f5", fontSize: 16, marginLeft: 5 },
+  linkButton: { color: "#4287f5", fontSize: 16, marginLeft: 5 },
 });

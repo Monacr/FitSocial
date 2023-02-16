@@ -279,7 +279,7 @@ const SignUpScreen = ({ navigation }) => {
               navigation.goBack();
             }}
           >
-            <Text style={interactive.textButton}>Log In</Text>
+            <Text style={interactive.linkButton}>Log In</Text>
           </TouchableOpacity>
         </View>
       </View>
