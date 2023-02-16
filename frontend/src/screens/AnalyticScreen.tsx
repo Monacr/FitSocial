@@ -10,15 +10,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const AddPostScreen = ({navigation}) => {
+const AnalyticScreen = ({navigation}) => {
     return(
         <View style={styles.container}>
-            <Text>This is where you post</Text>
+            <Text>These are your Analytics</Text>
         </View>
     );
 };
 
-export default AddPostScreen;
+export default AnalyticScreen;
 
 const styles = StyleSheet.create({
     container: {
