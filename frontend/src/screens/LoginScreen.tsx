@@ -1,17 +1,25 @@
+import React from "react";
 import {
+  StyleSheet,
   Text,
   View,
   SafeAreaView,
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import LoginSVG from "assets/icon.png";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { NavigationContainer } from "@react-navigation/native";
+import { FC } from "react";
 
 const LoginScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={{ justifyContent: "center", flex: 1 }}>
       <View style={{ paddingHorizontal: 20 }}>
-        <View style={{ alignItems: "center" }}></View>
+        <View style={{ alignItems: "center" }}>
+          {/* <img src={LoginSVG} alt = "Image" height={300} width={300}/> */}
+        </View>
         <Text
           style={{
             fontFamily: "Roboto-Medium",
@@ -33,8 +41,8 @@ const LoginScreen = ({ navigation }) => {
             marginBottom: 10,
           }}
         >
-          <Ionicons
-            name="pencil-outline"
+          <MaterialIcons
+            name="alternate-email"
             size={20}
             color="#666"
             style={{
@@ -42,7 +50,7 @@ const LoginScreen = ({ navigation }) => {
             }}
           />
           <TextInput
-            placeholder="Email or username"
+            placeholder="Email ID"
             style={{
               flex: 1,
               paddingVertical: 0,
@@ -98,22 +106,33 @@ const LoginScreen = ({ navigation }) => {
           <Text style={{ color: "#fff", fontSize: 16 }}>Login</Text>
         </TouchableOpacity>
 
+        <Text
+          style={{
+            textAlign: "center",
+            color: "#333",
+            fontSize: 12,
+            marginTop: 20,
+            marginBottom: 15,
+          }}
+        >
+          Or, login with...
+        </Text>
+
         <View
           style={{
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 10,
           }}
         >
-          <Text>Don't have an account?</Text>
+          <Text> Don't have an account?</Text>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("SignUp");
             }}
           >
             <Text style={{ color: "#4287f5", fontSize: 16, marginLeft: 5 }}>
-              Sign Up
+              Log In
             </Text>
           </TouchableOpacity>
         </View>
