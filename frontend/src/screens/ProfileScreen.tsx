@@ -10,16 +10,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const SettingScreen = ({navigation}) => {
+const ProfileScreen = ({navigation}) => {
     return(
         <View style={styles.container}>
-            <Text>These are your settings</Text>
-            <Button onPress={() => navigation.navigate("Login")} title="LogOut"  />
+            <Text>This is your Profile</Text>
         </View>
     );
 };
 
-export default SettingScreen;
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
     container: {
