@@ -53,7 +53,7 @@ function HomeStack() {
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarLabel: "Post",
+          tabBarLabel: "Profile",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-circle-outline" color={color} size={size} />
           ),
@@ -63,7 +63,7 @@ function HomeStack() {
         name="Settings"
         component={SettingScreen}
         options={{
-          tabBarLabel: "Post",
+          tabBarLabel: "Settings",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="cog-outline" color={color} size={size} />
           ),
