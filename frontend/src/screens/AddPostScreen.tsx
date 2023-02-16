@@ -12,10 +12,6 @@ const AddPostScreen = () => {
     return(
         <View style={styles.container}>
             <Text>Add Post Screen</Text>
-            <Button
-                title="Clicke Here"
-                onPress={()=> alert('Button Clicked!')}
-            />
         </View>
     );
 };
