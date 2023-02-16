@@ -4,13 +4,14 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
 } from "react-native";
+
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Signup } from "../bindings/Signup";
 import { useEffect, useState } from "react";
 import { URI } from "../constants";
+import { interactive } from "../styles/Interactive";
 
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -24,82 +25,114 @@ const SignUpScreen = ({ navigation }) => {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPassError, setConfirmPassError] = useState("");
 
-  useEffect(() => {
+  const [signupError, setSignupError] = useState("");
+  const [isValid, setIsValid] = useState(false);
+
+  const getConfirmPassError = () => {
     if (confirmPass == "") {
-      setConfirmPassError("");
+      return "";
     } else if (confirmPass !== password) {
-      setConfirmPassError("Passwords do not match");
+      return "Passwords do not match";
     } else {
-      setConfirmPassError(null);
+      return null;
     }
+  };
+  useEffect(() => {
+    setConfirmPassError(getConfirmPassError());
   }, [confirmPass]);
 
-  useEffect(() => {
+  const getPasswordError = () => {
     if (password == "") {
-      setPasswordError("");
+      return "";
     } else if (password.length < 8) {
-      setPasswordError("password must be at least 8 characters long");
+      return "password must be at least 8 characters long";
     } else if (password.length > 50) {
-      setPasswordError("password must be at most 50 characters long");
+      return "password must be at most 50 characters long";
     } else if (password.includes(" ")) {
-      setPasswordError("password cannot contain spaces");
+      return "password cannot contain spaces";
     } else {
-      setPasswordError(null);
+      return null;
     }
+  };
+  useEffect(() => {
+    setPasswordError(getPasswordError());
   }, [password]);
 
-  useEffect(() => {
+  const getEmailError = async (): Promise<string> => {
     if (email == "") {
-      setEmailError("");
-      return;
+      return "";
     }
     // regex from https://stackoverflow.com/a/46181/1098564
     const re =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(email)) {
-      setEmailError("invalid email address");
+      return "invalid email address";
     } else {
-      fetch(URI + "/users/get/email/" + email)
-        .then((res) =>
-          res.ok ? setEmailError("email has been taken") : setEmailError(null)
-        )
-        .catch((_) => setEmailError(""));
+      try {
+        const res = await fetch(URI + "/users/get/email/" + email);
+        return res.ok ? "email has been taken" : null;
+      } catch {
+        return "";
+      }
     }
+  };
+  useEffect(() => {
+    const exec = async () => {
+      setEmailError(await getEmailError());
+    };
+    exec();
   }, [email]);
 
-  useEffect(() => {
-    const setError = async () => {
-      if (name == "") {
-        setNameError("");
-      } else if (name.length < 3) {
-        setNameError("name must be at least 3 characters long");
-      } else if (name.length > 20) {
-        setNameError("name must be at most 20 characters long");
-      } else if (name.includes(" ")) {
-        setNameError("name cannot contain spaces");
-      } else {
-        try {
-          const res = await fetch(URI + "/users/get/name/" + name);
-          res.ok ? setNameError("username has been taken") : setNameError(null);
-        } catch {
-          setNameError("");
-        }
+  const getNameError = async (): Promise<string> => {
+    if (name == "") {
+      return "";
+    } else if (name.length < 3) {
+      return "name must be at least 3 characters long";
+    } else if (name.length > 20) {
+      return "name must be at most 20 characters long";
+    } else if (name.includes(" ")) {
+      return "name cannot contain spaces";
+    } else {
+      try {
+        const res = await fetch(URI + "/users/get/name/" + name);
+        return res.ok ? "username has been taken" : null;
+      } catch {
+        return "";
       }
+    }
+  };
+  useEffect(() => {
+    const exec = async () => {
+      setNameError(await getNameError());
     };
-    setError();
+    exec();
   }, [name]);
 
-  const isValid = (): boolean => {
-    return (
-      confirmPassError === null &&
-      passwordError === null &&
-      nameError === null &&
-      emailError === null
-    );
+  useEffect(() => {
+    const exec = async () => {
+      setIsValid(
+        getConfirmPassError() === null &&
+          getPasswordError() === null &&
+          (await getNameError()) === null &&
+          (await getEmailError()) === null
+      );
+    };
+    exec();
+  }, [name, email, password, confirmPass]);
+  const signupFailed = () => {
+    setName("");
+    setPassword("");
+    setConfirmPass("");
+    setEmail("");
+    setSignupError("Signup error occured. Please try again.");
   };
 
+  useEffect(() => {
+    setSignupError("");
+  }, [name, password, confirmPass, email]);
+
   const signup = () => {
-    if (!isValid()) {
+    if (!isValid) {
       return;
     }
 
@@ -114,18 +147,21 @@ const SignUpScreen = ({ navigation }) => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((_) => navigation.navigate("HomeStack"))
-      .catch((err) => console.error(err));
+      .then((res) =>
+        res.ok ? navigation.navigate("HomeStack") : signupFailed()
+      )
+      .catch((_) => signupFailed());
   };
 
   return (
     <SafeAreaView style={{ justifyContent: "center", flex: 1 }}>
       <View style={{ paddingHorizontal: 20 }}>
-        <Text style={style.title}>Sign Up</Text>
+        <Text style={interactive.title}>Sign Up</Text>
+        {signupError && <Text style={interactive.error}>signupError</Text>}
 
-        <View style={style.bar}>
+        <View style={interactive.bar}>
           <Ionicons
-            name="ios-lock-closed-outline"
+            name="pencil-outline"
             size={20}
             color="#666"
             style={{
@@ -141,10 +177,10 @@ const SignUpScreen = ({ navigation }) => {
             secureTextEntry={false}
             onChangeText={setName}
           />
-          {nameError && <Text style={style.error}>{nameError}</Text>}
+          {nameError && <Text style={interactive.error}>{nameError}</Text>}
         </View>
 
-        <View style={style.bar}>
+        <View style={interactive.bar}>
           <MaterialIcons
             name="alternate-email"
             size={20}
@@ -162,10 +198,10 @@ const SignUpScreen = ({ navigation }) => {
             keyboardType="email-address"
             onChangeText={setEmail}
           />
-          {emailError && <Text style={style.error}>{emailError}</Text>}
+          {emailError && <Text style={interactive.error}>{emailError}</Text>}
         </View>
 
-        <View style={style.bar}>
+        <View style={interactive.bar}>
           <Ionicons
             name="ios-lock-closed-outline"
             size={20}
@@ -183,10 +219,12 @@ const SignUpScreen = ({ navigation }) => {
             secureTextEntry={true}
             onChangeText={setPassword}
           />
-          {passwordError && <Text style={style.error}>{passwordError}</Text>}
+          {passwordError && (
+            <Text style={interactive.error}>{passwordError}</Text>
+          )}
         </View>
 
-        <View style={style.bar}>
+        <View style={interactive.bar}>
           <Ionicons
             name="ios-lock-closed-outline"
             size={20}
@@ -205,20 +243,16 @@ const SignUpScreen = ({ navigation }) => {
             onChangeText={setConfirmPass}
           />
           {confirmPassError && (
-            <Text style={style.error}>{confirmPassError}</Text>
+            <Text style={interactive.error}>{confirmPassError}</Text>
           )}
         </View>
 
         <TouchableOpacity
           onPress={signup}
-          disabled={!isValid()}
+          disabled={!isValid}
           style={{
-            backgroundColor: "#4287f5",
-            paddingVertical: 10,
-            alignItems: "center",
-            borderRadius: 5,
-            marginTop: 20,
-            opacity: isValid() ? 1 : 0.7,
+            ...interactive.primaryButton,
+            opacity: isValid ? 1 : 0.7,
           }}
         >
           <Text style={{ color: "#fff", fontSize: 20 }}>Sign Up</Text>
@@ -239,41 +273,18 @@ const SignUpScreen = ({ navigation }) => {
             alignItems: "center",
           }}
         >
-          <Text> Already Signed Up?</Text>
+          <Text>Already Signed Up?</Text>
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
             }}
           >
-            <Text style={{ color: "#4287f5", fontSize: 16, marginLeft: 5 }}>
-              Log In
-            </Text>
+            <Text style={interactive.textButton}>Log In</Text>
           </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
   );
 };
-
-const style = StyleSheet.create({
-  title: {
-    fontFamily: "Roboto-Medium",
-    fontSize: 28,
-    fontWeight: "500",
-    color: "#333",
-    marginBottom: 50,
-  },
-  bar: {
-    flexDirection: "row",
-    borderBottomColor: "#ccc",
-    borderBottomWidth: 1,
-    paddingBottom: 5,
-    marginBottom: 20,
-  },
-  error: {
-    color: "red",
-    fontSize: 12,
-  },
-});
 
 export default SignUpScreen;
