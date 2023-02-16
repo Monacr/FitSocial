@@ -34,6 +34,8 @@ const styles = StyleSheet.create({
     topPage: {
         fontSize: 26,
         marginTop: 10,
+        color: '#000080'
+
     },
     buttonContainer:{
         marginTop: 500,
