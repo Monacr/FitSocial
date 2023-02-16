@@ -6,11 +6,10 @@ import { Text, View } from 'react-native';
 import SignUpScreen from "./src/screens/SignUpScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import SettingScreen from "./src/screens/SettingScreen";
-import ProfileScreen from "./src/screens/ProfileScreen"
-import AnalyticScreen from "./src/screens/AnalyticScreen"
-import AddPostScreen from "./src/screens/AddPostScreen";
+import AnalyticScreen from "./src/screens/AnalyticScreen";
+import UploadScreen from "./src/screens/UploadScreen";
+import ProfileScreen from "./src/screens/ProfileScreen";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const ScreenStack = createNativeStackNavigator();
 
@@ -21,10 +20,10 @@ const Tab = createBottomTabNavigator();
 function HomeStack() {
   return (
     <Tab.Navigator >
-      <Tab.Screen name="Home" component={HomeScreen}/>
-      <Tab.Screen name="Profile" component={ProfileScreen}/>
-      <Tab.Screen name="Post" component={AddPostScreen}/>
+      <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Analytics" component={AnalyticScreen}/>
+      <Tab.Screen name="Upload" component={UploadScreen}/>
+      <Tab.Screen name="Profile" component={ProfileScreen}/>
       <Tab.Screen name="Settings" component={SettingScreen}/>
     </Tab.Navigator>
   );
