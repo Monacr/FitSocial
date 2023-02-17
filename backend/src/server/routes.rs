@@ -73,7 +73,7 @@ pub async fn user_update(
 #[get("/users/checkAuth")]
 pub async fn check_auth(jar: &CookieJar<'_>) -> Result<(), Error> {
     let auth_id = jar.get_private("auth_id");
-    if let Some(_) = auth_id {
+    if auth_id.is_some() {
         Ok(())
     } else {
         Err(Error::AuthenticationError)
