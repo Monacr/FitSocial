@@ -1,3 +1,4 @@
+import { useIsFocused } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import {
   Text,
@@ -8,22 +9,32 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { LoginInfo } from "../bindings/LoginInfo";
+import { useAuth } from "../components/AuthProvider";
+import { withoutAuth } from "../components/WithAuth";
 import { URI } from "../constants";
 import { interactive } from "../styles/Interactive";
 
 const LoginScreen = ({ navigation }) => {
+  const { setAuthenticated } = useAuth();
+
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [isValid, setIsValid] = useState(false);
 
-  useEffect(() => {
-    /* console.log("login:", document.cookie); */
-  }, []);
+  const focused = useIsFocused();
 
   useEffect(() => {
     setIsValid(name.length > 0 && password.length > 0);
   }, [name, password]);
+
+  useEffect(() => {
+    if (!focused) {
+      setError(null);
+      setName("");
+      setPassword("");
+    }
+  }, [focused]);
 
   const loginFailed = () => {
     setError("Incorrect username or password");
@@ -31,12 +42,6 @@ const LoginScreen = ({ navigation }) => {
     setPassword("");
   };
 
-  const leavePage = (nextPage: string) => {
-    navigation.navigate(nextPage);
-    setError(null);
-    setName("");
-    setPassword("");
-  };
   const submit = () => {
     const data: LoginInfo = { username: name, password };
 
@@ -45,9 +50,7 @@ const LoginScreen = ({ navigation }) => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((res) => {
-        res.ok ? leavePage("HomeStack") : loginFailed();
-      })
+      .then((res) => setAuthenticated(res.ok))
       .catch((_) => loginFailed());
   };
 
@@ -122,16 +125,13 @@ const LoginScreen = ({ navigation }) => {
           style={{
             flexDirection: "row",
             justifyContent: "center",
+
             alignItems: "center",
             marginTop: 30,
           }}
         >
           <Text>Don't have an account?</Text>
-          <TouchableOpacity
-            onPress={() => {
-              leavePage("SignUp");
-            }}
-          >
+          <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
             <Text style={interactive.linkButton}>Sign Up</Text>
           </TouchableOpacity>
         </View>
@@ -140,4 +140,4 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-export default LoginScreen;
+export default withoutAuth(LoginScreen);

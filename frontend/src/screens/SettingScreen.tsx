@@ -1,15 +1,19 @@
 import { View, Text, StyleSheet, Button } from "react-native";
+import { useAuth } from "../components/AuthProvider";
 import { URI } from "../constants";
+import { withAuth } from "../components/WithAuth";
 
-const SettingScreen = ({ navigation }) => {
+const SettingScreen = () => {
+  const { setAuthenticated } = useAuth();
   const logout = async () => {
-    try {
-      await fetch(URI + "/logout", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-      });
-      navigation.navigate("Login");
-    } catch {}
+    const res = await fetch(URI + "/logout", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+    });
+
+    if (res.ok) {
+      setAuthenticated(false);
+    }
   };
   return (
     <View style={styles.container}>

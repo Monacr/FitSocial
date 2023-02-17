@@ -18,6 +18,9 @@ Content-Type: application/json
         "password":"test"
 }
 #
+GET http://10.0.0.117:8000/users/checkAuth
+
+#
 POST http://10.0.0.117:8000/logout
 Content-Type: application/json
 
