@@ -9,7 +9,7 @@ import { withAuth } from "./WithAuth";
 
 const Tab = createBottomTabNavigator();
 
-const HomeStack = () => {
+function HomeStack() {
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -46,7 +46,7 @@ const HomeStack = () => {
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarLabel: "Post",
+          tabBarLabel: "Profile",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-circle-outline" color={color} size={size} />
           ),
@@ -56,7 +56,7 @@ const HomeStack = () => {
         name="Settings"
         component={SettingScreen}
         options={{
-          tabBarLabel: "Post",
+          tabBarLabel: "Settings",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="cog-outline" color={color} size={size} />
           ),
@@ -64,6 +64,6 @@ const HomeStack = () => {
       />
     </Tab.Navigator>
   );
-};
+}
 
 export default withAuth(HomeStack);

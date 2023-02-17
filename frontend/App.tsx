@@ -10,7 +10,6 @@ import {
 import HomeStack from "./src/components/HomeStack";
 
 const ScreenStack = createNativeStackNavigator();
-
 const Navigator = () => {
   const isAuthenticated = useIsAuthenticated();
   return (
