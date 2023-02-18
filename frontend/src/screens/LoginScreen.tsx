@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { StyleSheet } from 'react-native';
 import {
     Text,
     View,
@@ -51,25 +52,77 @@ const LoginScreen = ({ navigation }) => {
             .catch((_) => loginFailed());
     };
 
+    const styles = StyleSheet.create({
+        title: {
+            fontFamily: "Roboto-Medium",
+            fontSize: 28,
+            fontWeight: "500",
+            color: "#F5C528",
+            marginBottom: 10,
+        },
+        error: {
+            color: "red",
+        },
+        bar: {
+            flexDirection: "row",
+            alignItems: "center",
+            borderWidth: 1,
+            borderColor: "#000080",
+            borderRadius: 5,
+            paddingVertical: 5,
+            paddingHorizontal: 10,
+            marginBottom: 20,
+        },
+        primaryButton: {
+            backgroundColor: "#F5C528",
+            borderRadius: 5,
+            paddingVertical: 10,
+            alignItems: "center",
+            marginBottom: 20,
+        },
+        linkButton: {
+            color: "#666",
+            marginLeft: 5,
+        },
+        titleTwo: {
+            fontFamily: "Roboto-Medium",
+            fontSize: 32,
+            fontWeight: "bold",
+            color: "#F5C528",
+            marginBottom: 20,
+            marginTop: 20,
+            textAlign: "center",
+        }
+    });
+
     return (
-        <SafeAreaView style={{ justifyContent: "center", flex: 1 }}>
+        <SafeAreaView style={{ justifyContent: "center", flex: 1, backgroundColor: '#0B0B3B' }}>
             <View style={{ paddingHorizontal: 20 }}>
-                <View style={{ alignItems: "center" }}></View>
-                <Text style={interactive.title}>Log In</Text>
+                <Text
+                    style={styles.titleTwo}
+                >
+                    Fit Social
+                </Text>
+                <Text style={{fontFamily: "Roboto-Medium",
+                    fontSize: 28,
+                    fontWeight: "500",
+                    color: "#F5C528",
+                    marginBottom: 10,}}>Log In</Text>
 
                 {error && (
-                    <Text style={{ ...interactive.error, marginBottom: 10 }}>
+                    <Text style={{ ...styles.error, marginBottom: 10 }}>
                         {error}
                     </Text>
                 )}
 
-                <View style={interactive.bar}>
+                <View style={styles.bar}>
                     <Ionicons
                         name="pencil-outline"
                         size={20}
-                        color="#666"
+                        color= "#F5C528"
                         style={{
                             marginRight: 5,
+                            color: "#666"
                         }}
                     />
                     <TextInput
@@ -79,18 +132,19 @@ const LoginScreen = ({ navigation }) => {
                         style={{
                             flex: 1,
                             paddingVertical: 0,
+                            color: "#666",
                         }}
                         keyboardType="email-address"
                     />
                 </View>
 
-                <View style={interactive.bar}>
+                <View style={styles.bar}>
                     <Ionicons
                         name="ios-lock-closed-outline"
                         size={20}
-                        color="#666"
                         style={{
                             marginRight: 5,
+                            color: "#666"
                         }}
                     />
                     <TextInput
@@ -100,12 +154,13 @@ const LoginScreen = ({ navigation }) => {
                         style={{
                             flex: 1,
                             paddingVertical: 0,
+                            color: "#666"
                         }}
                         secureTextEntry={true}
                     />
 
                     <TouchableOpacity onPress={() => {}}>
-                        <Text style={{ color: "#333", fontSize: 12 }}>
+                        <Text style={{ color: "#666", fontSize: 12 }}>
                             Forgot Password?
                         </Text>
                     </TouchableOpacity>
@@ -113,9 +168,9 @@ const LoginScreen = ({ navigation }) => {
                 <TouchableOpacity
                     onPress={submit}
                     disabled={!isValid}
-                    style={{ ...interactive.primaryButton, opacity: isValid ? 1 : 0.7 }}
+                    style={{ ...styles.primaryButton, opacity: isValid ? 1 : 0.7 }}
                 >
-                    <Text style={{ color: "#fff", fontSize: 16 }}>Login</Text>
+                    <Text style={{ color: "#666", fontSize: 16 }}>Login</Text>
                 </TouchableOpacity>
 
                 <View
@@ -126,13 +181,13 @@ const LoginScreen = ({ navigation }) => {
                         marginTop: 30,
                     }}
                 >
-                    <Text>Don't have an account?</Text>
+                    <Text style={{ color: "#F5C528" }}> Don't have an account?</Text>
                     <TouchableOpacity
                         onPress={() => {
                             leavePage("SignUp");
                         }}
                     >
-                        <Text style={interactive.linkButton}>Sign Up</Text>
+                        <Text style={styles.linkButton}>Sign Up</Text>
                     </TouchableOpacity>
                 </View>
             </View>
