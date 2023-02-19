@@ -204,9 +204,10 @@ Schedule is listed in chronological feature order in one-person-week units.
 | User login                           | Feb 9        | Easy           | User accounts, authentication       | Asher           |               |
 | User signup                          | Feb 9        | Easy           | User accounts, authentication       | Aaron           |               |
 | Profile page                         | Feb 14       | Medium         | User accunts, user data persistence | Aaron           |               |
-| User stats                           | Feb 14       | Hard           | Profile page                        | Matthew         |               |
+| Navigation Bar                       | Feb 14       | Medium         | Screens                             | Matthew         |               |
+| User stats                           | Feb 14       | Hard           | Profile page                        |                 |               |
 | Content uploading                    | Feb 19       | Easy           | Authentication                      |                 |               |
-| Main feed                            | Feb 21       | Medium         | Content uploading                   |                 |               |
+| Main feed                            | Feb 21       | Medium         | Content uploading                   | Matthew         |               |
 | Comment section                      | Feb 28       | Hard           | Main feed                           |                 |               |
 | Mentions                             | Feb 28       | Medium         | Comment section                     |                 |               |
 | Direct messages                      | Feb 28       | Hard           | Profile page                        |                 |               |

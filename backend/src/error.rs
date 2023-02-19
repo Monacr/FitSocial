@@ -32,6 +32,9 @@ pub enum Error {
     #[error("Username or password incorrect")]
     LoginError,
 
+    #[error("Invalid authentication for request")]
+    AuthenticationError,
+
     #[error("Internal server error while computing")]
     ServerComputationError,
 
