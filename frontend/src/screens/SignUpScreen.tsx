@@ -28,6 +28,7 @@ const SignUpScreen = ({ navigation }) => {
   const [signupError, setSignupError] = useState("");
   const [isValid, setIsValid] = useState(false);
 
+  //Checks on the signup screen if the two passwords match
   const getConfirmPassError = () => {
     if (confirmPass == "") {
       return "";
@@ -41,6 +42,7 @@ const SignUpScreen = ({ navigation }) => {
     setConfirmPassError(getConfirmPassError());
   }, [confirmPass]);
 
+  // checks if the password is less than 8 chars or more than 50 and if it includes spaces
   const getPasswordError = () => {
     if (password == "") {
       return "";
@@ -54,21 +56,25 @@ const SignUpScreen = ({ navigation }) => {
       return null;
     }
   };
+  //if the password is not connected to the user then it will return an error
   useEffect(() => {
     setPasswordError(getPasswordError());
   }, [password]);
 
+  //makes sure the email is valid
   const getEmailError = async (): Promise<string> => {
     if (email == "") {
       return "";
     }
     // regex from https://stackoverflow.com/a/46181/1098564
+    //checks if the email is valid
     const re =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(email)) {
       return "invalid email address";
     } else {
       try {
+        //checks if the email is already in use
         const res = await fetch(URI + "/users/get/email/" + email);
         return res.ok ? "email has been taken" : null;
       } catch {
@@ -76,6 +82,7 @@ const SignUpScreen = ({ navigation }) => {
       }
     }
   };
+  //returns an error if the email is in use or is not in the valid format of an email
   useEffect(() => {
     const exec = async () => {
       setEmailError(await getEmailError());
@@ -83,6 +90,7 @@ const SignUpScreen = ({ navigation }) => {
     exec();
   }, [email]);
 
+  // checks if the name has been taken or is less than 3 chars or more than 20
   const getNameError = async (): Promise<string> => {
     if (name == "") {
       return "";
@@ -101,6 +109,7 @@ const SignUpScreen = ({ navigation }) => {
       }
     }
   };
+  //returns an error if the name is invalid
   useEffect(() => {
     const exec = async () => {
       setNameError(await getNameError());
@@ -111,7 +120,7 @@ const SignUpScreen = ({ navigation }) => {
   useEffect(() => {
     const exec = async () => {
       setIsValid(
-        getConfirmPassError() === null &&
+          getConfirmPassError() === null &&
           getPasswordError() === null &&
           (await getNameError()) === null &&
           (await getEmailError()) === null
@@ -119,6 +128,7 @@ const SignUpScreen = ({ navigation }) => {
     };
     exec();
   }, [name, email, password, confirmPass]);
+  //Returns the value of signupError if they incorrectly filled out the fields
   const signupFailed = () => {
     setName("");
     setPassword("");
@@ -127,15 +137,18 @@ const SignUpScreen = ({ navigation }) => {
     setSignupError("Signup error occured. Please try again.");
   };
 
+  //returns the setSignUpError when incorrectly signed up
   useEffect(() => {
     setSignupError("");
   }, [name, password, confirmPass, email]);
 
+
+  //returns when the signup data is valid
   const signup = () => {
     if (!isValid) {
       return;
     }
-
+//stores the data
     const data: Signup = {
       name,
       password,
@@ -144,147 +157,152 @@ const SignUpScreen = ({ navigation }) => {
 
     fetch(URI + "/signup", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {"content-type": "application/json"},
       body: JSON.stringify(data),
     })
-      .then((res) =>
-        res.ok ? navigation.navigate("HomeStack") : signupFailed()
-      )
-      .catch((_) => signupFailed());
+        .then((res) =>
+            res.ok ? navigation.navigate("HomeStack") : signupFailed()
+        )
+        .catch((_) => signupFailed());
   };
-
+// Returns the css and TypeScripts of the page. The style and the components of the screen
   return (
-    <SafeAreaView style={{ justifyContent: "center", flex: 1 }}>
-      <View style={{ paddingHorizontal: 20 }}>
-        <Text style={interactive.title}>Sign Up</Text>
-        {signupError && <Text style={interactive.error}>signupError</Text>}
+      <SafeAreaView style={{justifyContent: "center", flex: 1, backgroundColor: "#0B0B3B"}}>
+        <View style={{paddingHorizontal: 20}}>
+          <Text style={interactive.title}>Sign Up</Text>
+          {signupError && <Text style={interactive.error}>signupError</Text>}
 
-        <View style={interactive.bar}>
-          <Ionicons
-            name="pencil-outline"
-            size={20}
-            color="#666"
-            style={{
-              marginRight: 5,
-            }}
-          />
-          <TextInput
-            placeholder="Username"
-            style={{
-              flex: 1,
-              paddingVertical: 0,
-            }}
-            secureTextEntry={false}
-            onChangeText={setName}
-          />
-          {nameError && <Text style={interactive.error}>{nameError}</Text>}
-        </View>
+          <View style={interactive.bar}>
+            <Ionicons
+                name="pencil-outline"
+                size={20}
+                color="#666"
+                style={{
+                  marginRight: 5,
+                }}
+            />
+            <TextInput
+                placeholder="Username"
+                style={{
+                  flex: 1,
+                  paddingVertical: 0,
+                  color: "#666",
+                }}
+                secureTextEntry={false}
+                onChangeText={setName}
+            />
+            {nameError && <Text style={interactive.error}>{nameError}</Text>}
+          </View>
 
-        <View style={interactive.bar}>
-          <MaterialIcons
-            name="alternate-email"
-            size={20}
-            color="#666"
-            style={{
-              marginRight: 5,
-            }}
-          />
-          <TextInput
-            placeholder="Email"
-            style={{
-              flex: 1,
-              paddingVertical: 0,
-            }}
-            keyboardType="email-address"
-            onChangeText={setEmail}
-          />
-          {emailError && <Text style={interactive.error}>{emailError}</Text>}
-        </View>
+          <View style={interactive.bar}>
+            <MaterialIcons
+                name="alternate-email"
+                size={20}
+                color="#666"
+                style={{
+                  marginRight: 5,
+                }}
+            />
+            <TextInput
+                placeholder="Email"
+                style={{
+                  flex: 1,
+                  paddingVertical: 0,
+                  color: "#666",
+                }}
+                keyboardType="email-address"
+                onChangeText={setEmail}
+            />
+            {emailError && <Text style={interactive.error}>{emailError}</Text>}
+          </View>
 
-        <View style={interactive.bar}>
-          <Ionicons
-            name="ios-lock-closed-outline"
-            size={20}
-            color="#666"
-            style={{
-              marginRight: 5,
-            }}
-          />
-          <TextInput
-            placeholder="Password"
-            style={{
-              flex: 1,
-              paddingVertical: 0,
-            }}
-            secureTextEntry={true}
-            onChangeText={setPassword}
-          />
-          {passwordError && (
-            <Text style={interactive.error}>{passwordError}</Text>
-          )}
-        </View>
+          <View style={interactive.bar}>
+            <Ionicons
+                name="ios-lock-closed-outline"
+                size={20}
+                color="#666"
+                style={{
+                  marginRight: 5,
+                }}
+            />
+            <TextInput
+                placeholder="Password"
+                style={{
+                  flex: 1,
+                  paddingVertical: 0,
+                  color: "#666",
+                }}
+                secureTextEntry={true}
+                onChangeText={setPassword}
+            />
+            {passwordError && (
+                <Text style={interactive.error}>{passwordError}</Text>
+            )}
+          </View>
 
-        <View style={interactive.bar}>
-          <Ionicons
-            name="ios-lock-closed-outline"
-            size={20}
-            color="#666"
-            style={{
-              marginRight: 5,
-            }}
-          />
-          <TextInput
-            placeholder="Confirm Password"
-            style={{
-              flex: 1,
-              paddingVertical: 0,
-            }}
-            secureTextEntry={true}
-            onChangeText={setConfirmPass}
-          />
-          {confirmPassError && (
-            <Text style={interactive.error}>{confirmPassError}</Text>
-          )}
-        </View>
+          <View style={interactive.bar}>
+            <Ionicons
+                name="ios-lock-closed-outline"
+                size={20}
+                color="#666"
+                style={{
+                  marginRight: 5,
+                }}
+            />
+            <TextInput
+                placeholder="Confirm Password"
+                style={{
+                  flex: 1,
+                  paddingVertical: 0,
+                  color: "#666",
+                }}
+                secureTextEntry={true}
+                onChangeText={setConfirmPass}
+            />
+            {confirmPassError && (
+                <Text style={interactive.error}>{confirmPassError}</Text>
+            )}
+          </View>
 
-        <TouchableOpacity
-          onPress={signup}
-          disabled={!isValid}
-          style={{
-            ...interactive.primaryButton,
-            opacity: isValid ? 1 : 0.7,
-          }}
-        >
-          <Text style={{ color: "#fff", fontSize: 20 }}>Sign Up</Text>
-        </TouchableOpacity>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 30,
-          }}
-        ></View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text>Already Signed Up?</Text>
           <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}
+              onPress={signup}
+              disabled={!isValid}
+              style={{
+                ...interactive.primaryButton,
+                opacity: isValid ? 1 : 0.7,
+                backgroundColor: "#F5C528",
+              }}
           >
-            <Text style={interactive.linkButton}>Log In</Text>
+            <Text style={{color: "#fff", fontSize: 20}}>Sign Up</Text>
           </TouchableOpacity>
+
+          <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginBottom: 30,
+              }}
+          ></View>
+
+          <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+          >
+            <Text style={{color: "#666"}}>Already Signed Up?</Text>
+            <TouchableOpacity
+                onPress={() => {
+                  navigation.goBack();
+                }}
+            >
+              <Text style={{...interactive.linkButton, color: "#F5C528"}}>Log In</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
   );
 };
 
-export default SignUpScreen;
+  export default SignUpScreen;
