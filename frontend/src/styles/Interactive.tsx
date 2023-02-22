@@ -5,7 +5,7 @@ export const interactive = StyleSheet.create({
     fontFamily: "Roboto-Medium",
     fontSize: 28,
     fontWeight: "500",
-    color: "#333",
+    color: "#F5C528",
     marginBottom: 40,
   },
   bar: {
