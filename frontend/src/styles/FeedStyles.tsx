@@ -85,3 +85,10 @@ export const InteractionText = styled.Text`
     margin-top: 5px;
     margin-left: 5px;
 `;
+
+export const ProfileText = styled.Text`
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    `
+    ;
