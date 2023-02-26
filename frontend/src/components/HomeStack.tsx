@@ -1,6 +1,6 @@
 import HomeScreen from "../screens/HomeScreen";
 import SettingScreen from "../screens/SettingScreen";
-import AnalyticScreen from "../screens/AnalyticScreen";
+import StatsScreen from "../screens/StatsScreen";
 import UploadScreen from "../screens/UploadScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -23,10 +23,10 @@ function HomeStack() {
         }}
       />
       <Tab.Screen
-        name="Analytics"
-        component={AnalyticScreen}
+        name="Stats"
+        component={StatsScreen}
         options={{
-          tabBarLabel: "Analytics",
+          tabBarLabel: "Stats",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="analytics-outline" color={color} size={size} />
           ),
