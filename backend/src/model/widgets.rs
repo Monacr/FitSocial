@@ -162,7 +162,7 @@ pub struct WidgetController;
 impl WidgetController {
     pub const TABLE: &'static str = "widget";
 
-    fn get_widget_id(widget_type: WidgetType, user: &str) -> String {
+    pub fn widget_name(widget_type: WidgetType, user: &str) -> String {
         format!("{user}|{}", widget_type.to_string())
     }
     pub async fn add_widget(
@@ -180,7 +180,7 @@ impl WidgetController {
             .exec_create(
                 Self::TABLE,
                 widget,
-                Some(&Self::get_widget_id(widget_type, &user)),
+                Some(&Self::widget_name(widget_type, user)),
             )
             .await
     }
@@ -190,15 +190,20 @@ impl WidgetController {
 
         widget.entries.push((entry.date, entry.value));
 
+        let id = &format!(
+            "{}:{}",
+            Self::TABLE,
+            &Self::widget_name(entry.widget_type, &entry.user)
+        );
+
         store
             .exec_update(
-                &Self::get_widget_id(entry.widget_type, &entry.user),
+                id,
                 WidgetUpdate {
                     entries: widget.entries.clone(),
                 },
             )
-            .await?
-            .id;
+            .await?;
 
         Ok(widget)
     }
@@ -208,9 +213,9 @@ impl WidgetController {
         widget_type: WidgetType,
         user: &str,
     ) -> Result<Widget, Error> {
-        store
-            .exec_get(&Self::get_widget_id(widget_type, user))
-            .await
+        let id = &format!("{}:{}", Self::TABLE, &Self::widget_name(widget_type, user));
+
+        store.exec_get(id).await
     }
 }
 
@@ -275,7 +280,7 @@ mod tests {
 
             let mut res = WidgetController::append_entry(&store, entry)
                 .await
-                .expect("Appending entry ailed");
+                .expect("Appending entry failed");
 
             res.entries.sort_by_key(|v| v.0.clone());
 
