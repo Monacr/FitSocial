@@ -6,6 +6,7 @@
 //! this module.
 
 pub mod users;
+pub mod widgets;
 
 use serde::Serialize;
 use ts_rs::TS;
