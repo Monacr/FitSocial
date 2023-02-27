@@ -3,8 +3,10 @@
 use std::{collections::HashMap, str::FromStr};
 
 use maplit::btreemap;
+use rocket::request::FromParam;
 use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Array, Object, Value};
+use strum_macros::{Display, EnumString, ToString};
+use surrealdb::sql::{thing, Array, Object, Value};
 use ts_rs::TS;
 
 use crate::{
@@ -12,10 +14,8 @@ use crate::{
     store::{Creatable, Store, TryTake, Updatable},
 };
 
-use super::MutateResultData;
-
 /// Types of widgets possible
-#[derive(Debug, Serialize, TS, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Serialize, TS, Clone, Copy, Deserialize, PartialEq, EnumString, Display)]
 #[ts(export, export_to = "../frontend/src/bindings/")]
 pub enum WidgetType {
     Weight,
@@ -25,31 +25,11 @@ pub enum WidgetType {
     Steps,
 }
 
-impl ToString for WidgetType {
-    fn to_string(&self) -> String {
-        match self {
-            WidgetType::Weight => "Weight",
-            WidgetType::Squat => "Squat",
-            WidgetType::BenchPress => "Bench Press",
-            WidgetType::Deadlift => "Deadlift",
-            WidgetType::Steps => "Steps",
-        }
-        .to_string()
-    }
-}
+impl<'r> FromParam<'r> for WidgetType {
+    type Error = Error;
 
-impl FromStr for WidgetType {
-    type Err = Error;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "Weight" => Ok(WidgetType::Weight),
-            "Squat" => Ok(WidgetType::Squat),
-            "BenchPress" => Ok(WidgetType::BenchPress),
-            "Deadlift" => Ok(WidgetType::Deadlift),
-            "Steps" => Ok(WidgetType::Steps),
-            _ => Err(Error::InvalidData),
-        }
+    fn from_param(param: &'r str) -> Result<Self, Self::Error> {
+        param.parse().map_err(|_| Error::InvalidData)
     }
 }
 
@@ -159,30 +139,51 @@ impl Updatable for WidgetUpdate {}
 
 pub struct WidgetController;
 
+impl TryFrom<Wrapper<String>> for (WidgetType, String) {
+    type Error = Error;
+
+    fn try_from(Wrapper(value): Wrapper<String>) -> Result<Self, Self::Error> {
+        match dbg!(value).split_once('_') {
+            Some((user, widget_type)) => Ok((
+                widget_type.parse().map_err(|_| Error::InvalidData)?,
+                user.to_string(),
+            )),
+            _ => Err(Error::InvalidData),
+        }
+    }
+}
+
 impl WidgetController {
-    pub const TABLE: &'static str = "widget";
+    const TABLE: &'static str = "widget";
 
     pub fn widget_name(widget_type: WidgetType, user: &str) -> String {
-        format!("{user}|{}", widget_type.to_string())
+        format!("{user}_{widget_type}")
     }
     pub async fn add_widget(
         store: &Store,
         widget_type: WidgetType,
         user: &str,
-    ) -> Result<MutateResultData, Error> {
+    ) -> Result<(WidgetType, String), Error> {
         let widget = Widget {
             user: user.to_string(),
             widget_type,
             entries: Vec::new(),
         };
 
-        store
-            .exec_create(
-                Self::TABLE,
-                widget,
-                Some(&Self::widget_name(widget_type, user)),
-            )
-            .await
+        Wrapper(
+            thing(
+                &store
+                    .exec_create(
+                        Self::TABLE,
+                        widget,
+                        Some(&Self::widget_name(widget_type, user)),
+                    )
+                    .await?,
+            )?
+            .id
+            .to_string(),
+        )
+        .try_into()
     }
 
     pub async fn append_entry(store: &Store, entry: AppendWidgetEntry) -> Result<Widget, Error> {
@@ -230,12 +231,13 @@ mod tests {
 
         let user = "test";
 
-        let res_id = WidgetController::add_widget(&store, WidgetType::Deadlift, user)
-            .await
-            .expect("Creating a widget failed")
-            .id;
+        let (res_widget_type, res_user) =
+            WidgetController::add_widget(&store, WidgetType::Deadlift, user)
+                .await
+                .expect("Creating a widget failed");
 
-        dbg!(res_id);
+        assert_eq!(res_widget_type, WidgetType::Deadlift);
+        assert_eq!(res_user, user);
     }
 
     #[tokio::test]
@@ -244,12 +246,11 @@ mod tests {
 
         let user = "test";
 
-        let res_id = WidgetController::add_widget(&store, WidgetType::Deadlift, user)
+        WidgetController::add_widget(&store, WidgetType::BenchPress, user)
             .await
-            .expect("Creating a widget failed")
-            .id;
+            .expect("Creating a widget failed");
 
-        WidgetController::get_widget(&store, WidgetType::Deadlift, user)
+        WidgetController::get_widget(&store, WidgetType::BenchPress, user)
             .await
             .expect("Getting a widget failed");
     }
@@ -260,10 +261,9 @@ mod tests {
 
         let user = "test";
 
-        let res_id = WidgetController::add_widget(&store, WidgetType::Deadlift, user)
+        WidgetController::add_widget(&store, WidgetType::Deadlift, user)
             .await
-            .expect("Creating a widget failed")
-            .id;
+            .expect("Creating a widget failed");
 
         const N: usize = 10;
         for i in 0..N {

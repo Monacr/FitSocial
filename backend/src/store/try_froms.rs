@@ -64,7 +64,7 @@ impl TryFrom<Wrapper<Value>> for WidgetType {
 
     fn try_from(value: Wrapper<Value>) -> Result<Self, Self::Error> {
         let s: String = value.try_into()?;
-        s.parse()
+        s.parse().map_err(|_| Error::InvalidData)
     }
 }
 

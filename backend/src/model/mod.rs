@@ -10,17 +10,3 @@ pub mod widgets;
 
 use serde::Serialize;
 use ts_rs::TS;
-
-/// For now, all mutation queries will return an {id} struct.
-/// Note: Keep it light, and client can do a get if needed.
-#[derive(TS, Serialize, Clone)]
-#[ts(export, export_to = "../frontend/src/bindings/")]
-pub struct MutateResultData {
-    pub id: String,
-}
-
-impl From<String> for MutateResultData {
-    fn from(id: String) -> Self {
-        MutateResultData { id }
-    }
-}
