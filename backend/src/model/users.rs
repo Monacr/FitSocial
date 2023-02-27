@@ -70,6 +70,7 @@ impl From<UserCreate> for Value {
 impl Creatable for UserCreate {}
 
 /// Represents authentication information for a given user
+#[derive(Debug)]
 pub struct AuthInfo {
     pub user: String,
     pub password_hash: String,
@@ -184,13 +185,11 @@ impl UserController {
     /// Tries to login given username and password from [LoginInfo]
     /// Returns username on success
     pub async fn login(store: &Store, info: LoginInfo) -> Result<String, Error> {
-        let auth: AuthInfo = store
-            .exec_get(&format!("{}:{}", Self::AUTH_TABLE, info.user))
-            .await
-            .map_err(|e| match e {
-                Error::StoreFailToGet(x) => Error::LoginError,
-                _ => e,
-            })?;
+        let id = &format!("{}:{}", Self::AUTH_TABLE, info.user);
+        let auth: AuthInfo = store.exec_get(id).await.map_err(|e| match e {
+            Error::StoreFailToGet(x) => Error::LoginError,
+            _ => e,
+        })?;
 
         let matches = argon2::verify_encoded(&auth.password_hash, info.password.as_bytes())
             .map_err(|_| Error::ServerComputationError)?;

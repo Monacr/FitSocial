@@ -34,10 +34,11 @@ pub async fn login(
     jar: &CookieJar<'_>,
     store: &State<Store>,
 ) -> Result<Json<User>, Error> {
-    let id = UserController::login(store, info.0).await?;
-    jar.add_private(Cookie::new("auth_id", id.to_string()));
+    dbg!(&info.0);
+    let username = UserController::login(store, info.0).await?;
+    jar.add_private(Cookie::new("auth_name", username.to_string()));
 
-    UserController::get(store, &id)
+    UserController::get(store, &username)
         .await
         .map(|user| user.into())
 }
@@ -56,7 +57,7 @@ pub async fn signup(
 
 #[post("/logout", format = "json")]
 pub fn logout(jar: &CookieJar<'_>) {
-    jar.remove_private(Cookie::named("auth_id"));
+    jar.remove_private(Cookie::named("auth_name"));
 }
 
 #[post("/users/<id>/update", format = "json", data = "<updates>")]

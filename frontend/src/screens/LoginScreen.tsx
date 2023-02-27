@@ -43,14 +43,14 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const submit = () => {
-    const data: LoginInfo = { username: name, password };
+    const data: LoginInfo = { user: name, password };
 
     fetch(URI + "/login", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((res) => setAuthenticated(res.ok))
+      .then((res) => (res.ok ? setAuthenticated(true) : loginFailed()))
       .catch((_) => loginFailed());
   };
 
