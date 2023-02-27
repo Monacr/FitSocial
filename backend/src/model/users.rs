@@ -1,6 +1,5 @@
 //! Model and controller methods for the user type
 
-use super::MutateResultData;
 use crate::prelude::*;
 use crate::store::{Creatable, Store, TryTake, Updatable};
 use argon2::{self, Config};
@@ -16,17 +15,16 @@ use ts_rs::TS;
 #[derive(Debug, Serialize, TS)]
 #[ts(export, export_to = "../frontend/src/bindings/")]
 pub struct User {
-    pub id: String,
-    pub ctime: i64,
     pub name: String,
     pub email: String,
+    pub ctime: i64,
 }
 
 /// Represents login information
 #[derive(Debug, Deserialize, TS)]
 #[ts(export, export_to = "../frontend/src/bindings/")]
 pub struct LoginInfo {
-    pub username: String,
+    pub user: String,
     pub password: String,
 }
 
@@ -35,10 +33,9 @@ impl TryFrom<Object> for User {
 
     fn try_from(mut obj: Object) -> Result<Self, Self::Error> {
         let user = User {
-            id: obj.try_take("id")?,
-            ctime: obj.try_take("ctime")?,
             name: obj.try_take("name")?,
             email: obj.try_take("email")?,
+            ctime: obj.try_take("ctime")?,
         };
 
         Ok(user)
@@ -73,8 +70,9 @@ impl From<UserCreate> for Value {
 impl Creatable for UserCreate {}
 
 /// Represents authentication information for a given user
+#[derive(Debug)]
 pub struct AuthInfo {
-    pub user_id: String,
+    pub user: String,
     pub password_hash: String,
 }
 
@@ -83,7 +81,7 @@ impl TryFrom<Object> for AuthInfo {
 
     fn try_from(mut obj: Object) -> Result<Self, Self::Error> {
         let auth = AuthInfo {
-            user_id: obj.try_take("user_id")?,
+            user: obj.try_take("user")?,
             password_hash: obj.try_take("password_hash")?,
         };
 
@@ -94,7 +92,7 @@ impl TryFrom<Object> for AuthInfo {
 impl From<AuthInfo> for Value {
     fn from(auth: AuthInfo) -> Self {
         let data = btreemap! {
-            "user_id".into() => auth.user_id.into(),
+            "user".into() => auth.user.into(),
             "password_hash".into() => auth.password_hash.into(),
         };
 
@@ -148,11 +146,11 @@ impl Updatable for UserUpdate {}
 pub struct UserController;
 
 impl UserController {
-    pub const TABLE: &'static str = "user";
-    pub const AUTH_TABLE: &'static str = "auth";
+    const TABLE: &'static str = "user";
+    const AUTH_TABLE: &'static str = "auth";
 
-    pub async fn get(store: &Store, id: &str) -> Result<User, Error> {
-        store.exec_get(id).await
+    pub async fn get(store: &Store, name: &str) -> Result<User, Error> {
+        store.exec_get(&format!("{}:{name}", Self::TABLE)).await
     }
 
     pub async fn get_by_email(store: &Store, email: &str) -> Result<User, Error> {
@@ -165,13 +163,9 @@ impl UserController {
             .ok_or(Error::StoreFailToGet(email.to_string()))
     }
 
-    pub async fn update(
-        store: &Store,
-        id: &str,
-        data: UserUpdate,
-    ) -> Result<MutateResultData, Error> {
+    pub async fn update(store: &Store, name: &str, data: UserUpdate) -> Result<String, Error> {
         if let Some(password) = &data.password {
-            let auth_id = &format!("{}:{}", Self::AUTH_TABLE, thing(id)?.id);
+            let auth_id = &format!("{}:{name}", Self::AUTH_TABLE);
             store
                 .exec_update(
                     auth_id,
@@ -181,31 +175,34 @@ impl UserController {
                 )
                 .await?;
         }
-        store.exec_update(id, data).await
+        let res = store
+            .exec_update(&format!("{}:{name}", Self::TABLE), data)
+            .await?;
+
+        Ok(thing(&res)?.id.to_string())
     }
 
     /// Tries to login given username and password from [LoginInfo]
-    /// Returns id string on success
+    /// Returns username on success
     pub async fn login(store: &Store, info: LoginInfo) -> Result<String, Error> {
-        let auth: AuthInfo = store
-            .exec_get(&format!("auth:{}", info.username))
-            .await
-            .map_err(|e| match e {
-                Error::StoreFailToGet(x) => Error::LoginError,
-                _ => e,
-            })?;
+        let id = &format!("{}:{}", Self::AUTH_TABLE, info.user);
+        let auth: AuthInfo = store.exec_get(id).await.map_err(|e| match e {
+            Error::StoreFailToGet(x) => Error::LoginError,
+            _ => e,
+        })?;
 
         let matches = argon2::verify_encoded(&auth.password_hash, info.password.as_bytes())
             .map_err(|_| Error::ServerComputationError)?;
 
         if matches {
-            Ok(auth.user_id)
+            Ok(auth.user)
         } else {
             Err(Error::LoginError)
         }
     }
 
-    pub async fn signup(store: &Store, data: Signup) -> Result<MutateResultData, Error> {
+    // Returns username on success
+    pub async fn signup(store: &Store, data: Signup) -> Result<String, Error> {
         if Self::get_by_email(store, &data.email).await.is_ok() {
             return Err(Error::InvalidData);
         }
@@ -216,7 +213,7 @@ impl UserController {
         };
 
         let auth = AuthInfo {
-            user_id: format!("{}:{}", Self::TABLE, data.name),
+            user: data.name.clone(),
             password_hash: Self::password_hash(&data.password)?,
         };
 
@@ -224,9 +221,11 @@ impl UserController {
         store
             .exec_create(Self::AUTH_TABLE, auth, Some(&data.name))
             .await;
-        store
+        let res = store
             .exec_create(Self::TABLE, create, Some(&data.name))
-            .await
+            .await?;
+
+        Ok(thing(&res)?.id.to_string())
     }
 
     pub async fn select_all(store: &Store) -> Result<Vec<User>, Error> {
@@ -247,6 +246,8 @@ impl UserController {
 
 #[cfg(test)]
 mod tests {
+    use surrealdb::sql::thing;
+
     use crate::store::Store;
 
     use super::{LoginInfo, Signup, UserController, UserCreate, UserUpdate};
@@ -297,11 +298,11 @@ mod tests {
             password: "password".to_string(),
         };
 
-        let res = UserController::signup(&store, new_user)
+        let name = UserController::signup(&store, new_user)
             .await
             .expect("Creating a user failed");
 
-        let res = UserController::get(&store, &res.id)
+        let res = UserController::get(&store, &name)
             .await
             .expect("Getting user failed");
 
@@ -319,7 +320,7 @@ mod tests {
             password: "password".to_string(),
         };
 
-        let res = UserController::signup(&store, new_user)
+        UserController::signup(&store, new_user)
             .await
             .expect("Creating a user failed");
 
@@ -345,17 +346,17 @@ mod tests {
             .await
             .expect("Creating a user failed");
 
-        let login_id = UserController::login(
+        let login_res = UserController::login(
             &store,
             LoginInfo {
-                username: "user".to_string(),
+                user: "user".to_string(),
                 password: "password".to_string(),
             },
         )
         .await
         .expect("Failed to authenticate");
 
-        assert_eq!(login_id, res.id)
+        assert_eq!(login_res, res);
     }
 
     #[tokio::test]
@@ -372,27 +373,25 @@ mod tests {
             .await
             .expect("Creating a user failed");
 
-        let id = &res.id;
-
         let change_email = UserUpdate {
             password: None,
             email: Some("user@yahoo.com".to_string()),
         };
 
-        let res = UserController::update(&store, id, change_email)
+        let update_res = UserController::update(&store, &res, change_email)
             .await
             .expect("Updating user failed");
 
-        assert_eq!(&res.id, id);
+        assert_eq!(res, update_res);
 
-        let get = UserController::get(&store, id)
+        let get = UserController::get(&store, &res)
             .await
             .expect("Getting user failed");
 
         UserController::login(
             &store,
             LoginInfo {
-                username: "user".to_string(),
+                user: "user".to_string(),
                 password: "password".to_string(),
             },
         )
@@ -406,20 +405,20 @@ mod tests {
             password: Some("VerySecurePassword".to_string()),
         };
 
-        let res = UserController::update(&store, id, change_everything)
+        let update_res = UserController::update(&store, &res, change_everything)
             .await
             .expect("Updating user failed");
 
-        assert_eq!(&res.id, id);
+        assert_eq!(update_res, res);
 
-        let get = UserController::get(&store, id)
+        let get = UserController::get(&store, &res)
             .await
             .expect("Getting user failed");
 
         UserController::login(
             &store,
             LoginInfo {
-                username: "user".to_string(),
+                user: "user".to_string(),
                 password: "VerySecurePassword".to_string(),
             },
         )

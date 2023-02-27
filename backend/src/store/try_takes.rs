@@ -1,9 +1,14 @@
 //! TryGet is a trait that makes it easier to get data from a
 //! SurrealDB Object
 
-use surrealdb::sql::Object;
+use std::collections::HashMap;
 
-use crate::prelude::*;
+use surrealdb::sql::{Object, Value};
+
+use crate::{
+    model::widgets::{Date, WidgetType},
+    prelude::*,
+};
 
 /// Try to take value with provided key
 pub trait TryTakeImpl<T> {
@@ -27,18 +32,11 @@ impl<S> TryTake for S {
     }
 }
 
-impl TryTakeImpl<String> for Object {
-    fn try_take_impl(&mut self, key: &str) -> Result<String, Error> {
-        let v = self.remove(key).map(|v| Wrapper(v).try_into());
-        match v {
-            Some(Ok(res)) => Ok(res),
-            _ => Err(Error::PropertyError(key.to_string())),
-        }
-    }
-}
-
-impl TryTakeImpl<i64> for Object {
-    fn try_take_impl(&mut self, key: &str) -> Result<i64, Error> {
+impl<T> TryTakeImpl<T> for Object
+where
+    T: TryFrom<Wrapper<Value>>,
+{
+    fn try_take_impl(&mut self, key: &str) -> Result<T, Error> {
         let v = self.remove(key).map(|v| Wrapper(v).try_into());
         match v {
             Some(Ok(res)) => Ok(res),

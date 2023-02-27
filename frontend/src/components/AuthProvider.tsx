@@ -13,8 +13,12 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const res = await fetch(URI + "/users/checkAuth");
-      setAuthenticated(res.ok);
+      try {
+        const res = await fetch(URI + "/users/checkAuth");
+        setAuthenticated(res.ok);
+      } catch {
+        setAuthenticated(false);
+      }
       setLoading(false);
     };
     initializeAuth();

@@ -14,7 +14,7 @@ POST http://10.0.0.117:8000/login
 Content-Type: application/json
 
 {
-        "username":"test",
+        "user":"test",
         "password":"test"
 }
 #
@@ -24,21 +24,20 @@ GET http://10.0.0.117:8000/users/checkAuth
 POST http://10.0.0.117:8000/logout
 Content-Type: application/json
 
-# Create user
-POST http://10.0.0.117:8000/signup
+#
+GET http://10.0.0.117:8000/users/test/stats/Deadlift
+
+#
+POST http://10.0.0.117:8000/users/addWidget/Deadlift
+Content-Type: application/json
+
+
+#
+POST http://10.0.0.117:8000/users/updateWidgetEntry
 Content-Type: application/json
 
 {
-        "name":"sis",
-        "email":"yo",
-        "password":"sispassword"
+        "widget_type":"Deadlift",
+        "date": {"year":2020, "month": 11, "day": 30},
+        "value": 495
 }
-
-#
-GET http://10.0.0.117:8000/users
-
-#
-GET http://10.0.0.117:8000/users/get/name/bro
-
-#
-GET http://10.0.0.117:8000/users/get/email/yo
