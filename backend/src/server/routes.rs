@@ -1,11 +1,13 @@
 //! Defines the routes used by the server to receive HTTP requests.
 
 use crate::model::users::{LoginInfo, Signup, User, UserController, UserCreate, UserUpdate};
-use crate::model::widgets::{Widget, WidgetController, WidgetType};
+use crate::model::widgets::{AppendWidgetEntry, Widget, WidgetController, WidgetType};
 use crate::prelude::Error;
 use crate::store::Store;
 use rocket::http::{Cookie, CookieJar};
 use rocket::{serde::json::Json, State};
+
+use super::AuthenticatedUser;
 
 #[get("/users/<name>")]
 pub async fn get_user_by_name(name: &str, store: &State<Store>) -> Result<Json<User>, Error> {
@@ -34,7 +36,6 @@ pub async fn login(
     jar: &CookieJar<'_>,
     store: &State<Store>,
 ) -> Result<Json<User>, Error> {
-    dbg!(&info.0);
     let username = UserController::login(store, info.0).await?;
     jar.add_private(Cookie::new("auth_name", username.to_string()));
 
@@ -60,32 +61,50 @@ pub fn logout(jar: &CookieJar<'_>) {
     jar.remove_private(Cookie::named("auth_name"));
 }
 
-#[post("/users/<id>/update", format = "json", data = "<updates>")]
+#[post("/users/update", format = "json", data = "<updates>")]
 pub async fn user_update(
-    id: &str,
+    user: AuthenticatedUser,
     updates: Json<UserUpdate>,
     store: &State<Store>,
 ) -> Result<String, Error> {
-    UserController::update(store, id, updates.0).await
+    UserController::update(store, &user.0, updates.0).await
 }
 
 #[get("/users/checkAuth")]
-pub async fn check_auth(jar: &CookieJar<'_>) -> Result<(), Error> {
-    let auth_name = jar.get_private("auth_name");
-    if auth_name.is_some() {
-        Ok(())
-    } else {
-        Err(Error::AuthenticationError)
-    }
+pub async fn check_auth(jar: &CookieJar<'_>, name: AuthenticatedUser) -> Result<(), ()> {
+    Ok(())
 }
 
-#[get("/users/<user>/<widget_type>")]
+#[get("/users/<user>/stats/<widget_type>")]
 pub async fn get_widget(
     store: &State<Store>,
     user: &str,
     widget_type: WidgetType,
 ) -> Result<Json<Widget>, Error> {
     WidgetController::get_widget(store, widget_type, user)
+        .await
+        .map(|data| data.into())
+}
+
+#[post("/users/addWidget/<widget_type>", format = "json")]
+pub async fn add_widget(
+    user: AuthenticatedUser,
+    widget_type: WidgetType,
+    store: &State<Store>,
+) -> Result<Json<Widget>, Error> {
+    WidgetController::add_widget(store, widget_type, &user.0).await?;
+    WidgetController::get_widget(store, widget_type, &user.0)
+        .await
+        .map(|data| data.into())
+}
+
+#[post("/users/updateWidgetEntry", format = "json", data = "<entry>")]
+pub async fn update_widget_entry(
+    user: AuthenticatedUser,
+    entry: Json<AppendWidgetEntry>,
+    store: &State<Store>,
+) -> Result<Json<Widget>, Error> {
+    WidgetController::update_entry(store, &user.0, entry.0)
         .await
         .map(|data| data.into())
 }

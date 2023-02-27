@@ -2,4 +2,4 @@
 import type { Date } from "./Date";
 import type { WidgetType } from "./WidgetType";
 
-export interface AppendWidgetEntry { user: string, widget_type: WidgetType, date: Date, value: number, }
+export interface AppendWidgetEntry { widget_type: WidgetType, date: Date, value: number, }

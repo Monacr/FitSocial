@@ -3,6 +3,7 @@
 use std::{collections::HashMap, str::FromStr};
 
 use maplit::btreemap;
+use rand::seq::SliceRandom;
 use rocket::request::FromParam;
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumString, ToString};
@@ -115,7 +116,6 @@ impl Creatable for Widget {}
 #[derive(Debug, Deserialize, TS)]
 #[ts(export, export_to = "../frontend/src/bindings/")]
 pub struct AppendWidgetEntry {
-    pub user: String,
     pub widget_type: WidgetType,
     pub date: Date,
     pub value: f32,
@@ -186,15 +186,28 @@ impl WidgetController {
         .try_into()
     }
 
-    pub async fn append_entry(store: &Store, entry: AppendWidgetEntry) -> Result<Widget, Error> {
-        let mut widget = Self::get_widget(store, entry.widget_type, &entry.user).await?;
+    pub async fn update_entry(
+        store: &Store,
+        user: &str,
+        entry: AppendWidgetEntry,
+    ) -> Result<Widget, Error> {
+        let mut widget = Self::get_widget(store, entry.widget_type, user).await?;
 
-        widget.entries.push((entry.date, entry.value));
+        // If entry for that date already exists, change the value associated
+        if let Some(prev) = widget
+            .entries
+            .iter_mut()
+            .find(|(date, _)| date == &entry.date)
+        {
+            prev.1 = entry.value;
+        } else {
+            widget.entries.push((entry.date, entry.value));
+        }
 
         let id = &format!(
             "{}:{}",
             Self::TABLE,
-            &Self::widget_name(entry.widget_type, &entry.user)
+            &Self::widget_name(entry.widget_type, user)
         );
 
         store
@@ -268,7 +281,6 @@ mod tests {
         const N: usize = 10;
         for i in 0..N {
             let entry = AppendWidgetEntry {
-                user: user.to_string(),
                 widget_type: WidgetType::Deadlift,
                 date: Date {
                     year: 2023,
@@ -278,7 +290,7 @@ mod tests {
                 value: 135.0 + 90.0 * i as f32,
             };
 
-            let mut res = WidgetController::append_entry(&store, entry)
+            let mut res = WidgetController::update_entry(&store, user, entry)
                 .await
                 .expect("Appending entry failed");
 
@@ -290,17 +302,28 @@ mod tests {
             assert_eq!(res.entries.last().unwrap().1, 135.0 + 90.0 * i as f32);
         }
 
-        let mut res = WidgetController::get_widget(&store, WidgetType::Deadlift, user)
-            .await
-            .expect("Getting a widget failed");
+        // Update preexisting values
+        for i in 0..N {
+            let entry = AppendWidgetEntry {
+                widget_type: WidgetType::Deadlift,
+                date: Date {
+                    year: 2023,
+                    month: 12,
+                    day: 20 + i as u32,
+                },
+                value: 135.0 + 90.0 * 2.0 * i as f32,
+            };
 
-        res.entries.sort_by_key(|v| v.0.clone());
+            let mut res = WidgetController::update_entry(&store, user, entry)
+                .await
+                .expect("Appending entry failed");
 
-        assert_eq!(res.widget_type, WidgetType::Deadlift);
-        assert_eq!(res.user, user);
-        assert_eq!(res.entries.len(), N);
-        for (i, v) in res.entries.iter().enumerate() {
-            assert_eq!(v.1, 135.0 + 90.0 * i as f32);
+            res.entries.sort_by_key(|v| v.0.clone());
+
+            assert_eq!(res.widget_type, WidgetType::Deadlift);
+            assert_eq!(res.user, user);
+            assert_eq!(res.entries.len(), N);
+            assert_eq!(res.entries[i].1, 135.0 + 90.0 * 2.0 * i as f32);
         }
     }
 }
