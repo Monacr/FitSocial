@@ -12,6 +12,7 @@ import { Signup } from "../bindings/Signup";
 import { useEffect, useState } from "react";
 import { URI } from "../constants";
 import { interactive } from "../styles/Interactive";
+import { useAuth } from "../components/AuthProvider";
 
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -27,6 +28,8 @@ const SignUpScreen = ({ navigation }) => {
 
   const [signupError, setSignupError] = useState("");
   const [isValid, setIsValid] = useState(false);
+
+  const { setAuthenticated } = useAuth();
 
   //Checks on the signup screen if the two passwords match
   const getConfirmPassError = () => {
@@ -69,13 +72,13 @@ const SignUpScreen = ({ navigation }) => {
     // regex from https://stackoverflow.com/a/46181/1098564
     //checks if the email is valid
     const re =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(email)) {
       return "invalid email address";
     } else {
       try {
         //checks if the email is already in use
-        const res = await fetch(URI + "/users/get/email/" + email);
+        const res = await fetch(URI + "/users/email/" + email);
         return res.ok ? "email has been taken" : null;
       } catch {
         return "";
@@ -102,7 +105,7 @@ const SignUpScreen = ({ navigation }) => {
       return "name cannot contain spaces";
     } else {
       try {
-        const res = await fetch(URI + "/users/get/name/" + name);
+        const res = await fetch(URI + "/users/" + name);
         return res.ok ? "username has been taken" : null;
       } catch {
         return "";
@@ -120,7 +123,7 @@ const SignUpScreen = ({ navigation }) => {
   useEffect(() => {
     const exec = async () => {
       setIsValid(
-          getConfirmPassError() === null &&
+        getConfirmPassError() === null &&
           getPasswordError() === null &&
           (await getNameError()) === null &&
           (await getEmailError()) === null
@@ -142,13 +145,12 @@ const SignUpScreen = ({ navigation }) => {
     setSignupError("");
   }, [name, password, confirmPass, email]);
 
-
   //returns when the signup data is valid
   const signup = () => {
     if (!isValid) {
       return;
     }
-//stores the data
+    //stores the data
     const data: Signup = {
       name,
       password,
@@ -157,152 +159,154 @@ const SignUpScreen = ({ navigation }) => {
 
     fetch(URI + "/signup", {
       method: "POST",
-      headers: {"content-type": "application/json"},
+      headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     })
-        .then((res) =>
-            res.ok ? navigation.navigate("HomeStack") : signupFailed()
-        )
-        .catch((_) => signupFailed());
+      .then((res) => (res.ok ? setAuthenticated(true) : signupFailed()))
+      .catch((_) => signupFailed());
   };
-// Returns the css and TypeScripts of the page. The style and the components of the screen
+  // Returns the css and TypeScripts of the page. The style and the components of the screen
   return (
-      <SafeAreaView style={{justifyContent: "center", flex: 1, backgroundColor: "#0B0B3B"}}>
-        <View style={{paddingHorizontal: 20}}>
-          <Text style={interactive.title}>Sign Up</Text>
-          {signupError && <Text style={interactive.error}>signupError</Text>}
+    <SafeAreaView
+      style={{ justifyContent: "center", flex: 1, backgroundColor: "#0B0B3B" }}
+    >
+      <View style={{ paddingHorizontal: 20 }}>
+        <Text style={interactive.title}>Sign Up</Text>
+        {signupError && <Text style={interactive.error}>signupError</Text>}
 
-          <View style={interactive.bar}>
-            <Ionicons
-                name="pencil-outline"
-                size={20}
-                color="#666"
-                style={{
-                  marginRight: 5,
-                }}
-            />
-            <TextInput
-                placeholder="Username"
-                style={{
-                  flex: 1,
-                  paddingVertical: 0,
-                  color: "#666",
-                }}
-                secureTextEntry={false}
-                onChangeText={setName}
-            />
-            {nameError && <Text style={interactive.error}>{nameError}</Text>}
-          </View>
-
-          <View style={interactive.bar}>
-            <MaterialIcons
-                name="alternate-email"
-                size={20}
-                color="#666"
-                style={{
-                  marginRight: 5,
-                }}
-            />
-            <TextInput
-                placeholder="Email"
-                style={{
-                  flex: 1,
-                  paddingVertical: 0,
-                  color: "#666",
-                }}
-                keyboardType="email-address"
-                onChangeText={setEmail}
-            />
-            {emailError && <Text style={interactive.error}>{emailError}</Text>}
-          </View>
-
-          <View style={interactive.bar}>
-            <Ionicons
-                name="ios-lock-closed-outline"
-                size={20}
-                color="#666"
-                style={{
-                  marginRight: 5,
-                }}
-            />
-            <TextInput
-                placeholder="Password"
-                style={{
-                  flex: 1,
-                  paddingVertical: 0,
-                  color: "#666",
-                }}
-                secureTextEntry={true}
-                onChangeText={setPassword}
-            />
-            {passwordError && (
-                <Text style={interactive.error}>{passwordError}</Text>
-            )}
-          </View>
-
-          <View style={interactive.bar}>
-            <Ionicons
-                name="ios-lock-closed-outline"
-                size={20}
-                color="#666"
-                style={{
-                  marginRight: 5,
-                }}
-            />
-            <TextInput
-                placeholder="Confirm Password"
-                style={{
-                  flex: 1,
-                  paddingVertical: 0,
-                  color: "#666",
-                }}
-                secureTextEntry={true}
-                onChangeText={setConfirmPass}
-            />
-            {confirmPassError && (
-                <Text style={interactive.error}>{confirmPassError}</Text>
-            )}
-          </View>
-
-          <TouchableOpacity
-              onPress={signup}
-              disabled={!isValid}
-              style={{
-                ...interactive.primaryButton,
-                opacity: isValid ? 1 : 0.7,
-                backgroundColor: "#F5C528",
-              }}
-          >
-            <Text style={{color: "#fff", fontSize: 20}}>Sign Up</Text>
-          </TouchableOpacity>
-
-          <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginBottom: 30,
-              }}
-          ></View>
-
-          <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-          >
-            <Text style={{color: "#666"}}>Already Signed Up?</Text>
-            <TouchableOpacity
-                onPress={() => {
-                  navigation.goBack();
-                }}
-            >
-              <Text style={{...interactive.linkButton, color: "#F5C528"}}>Log In</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={interactive.bar}>
+          <Ionicons
+            name="pencil-outline"
+            size={20}
+            color="#666"
+            style={{
+              marginRight: 5,
+            }}
+          />
+          <TextInput
+            placeholder="Username"
+            style={{
+              flex: 1,
+              paddingVertical: 0,
+              color: "#666",
+            }}
+            secureTextEntry={false}
+            onChangeText={setName}
+          />
+          {nameError && <Text style={interactive.error}>{nameError}</Text>}
         </View>
-      </SafeAreaView>
+
+        <View style={interactive.bar}>
+          <MaterialIcons
+            name="alternate-email"
+            size={20}
+            color="#666"
+            style={{
+              marginRight: 5,
+            }}
+          />
+          <TextInput
+            placeholder="Email"
+            style={{
+              flex: 1,
+              paddingVertical: 0,
+              color: "#666",
+            }}
+            keyboardType="email-address"
+            onChangeText={setEmail}
+          />
+          {emailError && <Text style={interactive.error}>{emailError}</Text>}
+        </View>
+
+        <View style={interactive.bar}>
+          <Ionicons
+            name="ios-lock-closed-outline"
+            size={20}
+            color="#666"
+            style={{
+              marginRight: 5,
+            }}
+          />
+          <TextInput
+            placeholder="Password"
+            style={{
+              flex: 1,
+              paddingVertical: 0,
+              color: "#666",
+            }}
+            secureTextEntry={true}
+            onChangeText={setPassword}
+          />
+          {passwordError && (
+            <Text style={interactive.error}>{passwordError}</Text>
+          )}
+        </View>
+
+        <View style={interactive.bar}>
+          <Ionicons
+            name="ios-lock-closed-outline"
+            size={20}
+            color="#666"
+            style={{
+              marginRight: 5,
+            }}
+          />
+          <TextInput
+            placeholder="Confirm Password"
+            style={{
+              flex: 1,
+              paddingVertical: 0,
+              color: "#666",
+            }}
+            secureTextEntry={true}
+            onChangeText={setConfirmPass}
+          />
+          {confirmPassError && (
+            <Text style={interactive.error}>{confirmPassError}</Text>
+          )}
+        </View>
+
+        <TouchableOpacity
+          onPress={signup}
+          disabled={!isValid}
+          style={{
+            ...interactive.primaryButton,
+            opacity: isValid ? 1 : 0.7,
+            backgroundColor: "#F5C528",
+          }}
+        >
+          <Text style={{ color: "#fff", fontSize: 20 }}>Sign Up</Text>
+        </TouchableOpacity>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 30,
+          }}
+        ></View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "#666" }}>Already Signed Up?</Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <Text style={{ ...interactive.linkButton, color: "#F5C528" }}>
+              Log In
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 };
 
-  export default SignUpScreen;
+export default SignUpScreen;
