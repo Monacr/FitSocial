@@ -2,6 +2,10 @@ Fit Social is a primarily mobile social media platform that allows users to trac
 
 ## Repo structure
 
+[Dev doc](./DevDoc.md) Documentation for developers.
+
+[User doc](./UserDoc.md) Documentation for users.
+
 [docs](./docs): The organizational documents relevant to the project; schedules, goals, and roles.
 
 [frontend](./frontend): Files relevant to the frontend of the project; static frontend files.
