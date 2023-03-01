@@ -59,4 +59,4 @@ then finally give any additional information if need be.
 ## Known Bugs
 - Sometimes running `npm i` in the frontend for the first time does not install all the dependancies. You may need to run `npm i [required module]` if there is an error regarding an unkown npm module.
 - If you do not have libclang you may need to install that for the backend to run properly.
-
+- Using autocomplete on the signup page will place a space at the end of the text field, but will not display and error in red (but will still not allow you to submit the signup). This is because the error from the backend arrives out of sync with page refresh.
