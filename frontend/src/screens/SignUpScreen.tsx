@@ -12,6 +12,7 @@ import { Signup } from "../bindings/Signup";
 import { useEffect, useState } from "react";
 import { URI } from "../constants";
 import { interactive } from "../styles/Interactive";
+import { useAuth } from "../components/AuthProvider";
 
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -28,6 +29,9 @@ const SignUpScreen = ({ navigation }) => {
   const [signupError, setSignupError] = useState("");
   const [isValid, setIsValid] = useState(false);
 
+  const { setAuthenticated } = useAuth();
+
+  //Checks on the signup screen if the two passwords match
   const getConfirmPassError = () => {
     if (confirmPass == "") {
       return "";
@@ -41,6 +45,7 @@ const SignUpScreen = ({ navigation }) => {
     setConfirmPassError(getConfirmPassError());
   }, [confirmPass]);
 
+  // checks if the password is less than 8 chars or more than 50 and if it includes spaces
   const getPasswordError = () => {
     if (password == "") {
       return "";
@@ -54,28 +59,33 @@ const SignUpScreen = ({ navigation }) => {
       return null;
     }
   };
+  //if the password is not connected to the user then it will return an error
   useEffect(() => {
     setPasswordError(getPasswordError());
   }, [password]);
 
+  //makes sure the email is valid
   const getEmailError = async (): Promise<string> => {
     if (email == "") {
       return "";
     }
     // regex from https://stackoverflow.com/a/46181/1098564
+    //checks if the email is valid
     const re =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(email)) {
       return "invalid email address";
     } else {
       try {
-        const res = await fetch(URI + "/users/get/email/" + email);
+        //checks if the email is already in use
+        const res = await fetch(URI + "/users/email/" + email);
         return res.ok ? "email has been taken" : null;
       } catch {
         return "";
       }
     }
   };
+  //returns an error if the email is in use or is not in the valid format of an email
   useEffect(() => {
     const exec = async () => {
       setEmailError(await getEmailError());
@@ -83,6 +93,7 @@ const SignUpScreen = ({ navigation }) => {
     exec();
   }, [email]);
 
+  // checks if the name has been taken or is less than 3 chars or more than 20
   const getNameError = async (): Promise<string> => {
     if (name == "") {
       return "";
@@ -94,13 +105,14 @@ const SignUpScreen = ({ navigation }) => {
       return "name cannot contain spaces";
     } else {
       try {
-        const res = await fetch(URI + "/users/get/name/" + name);
+        const res = await fetch(URI + "/users/" + name);
         return res.ok ? "username has been taken" : null;
       } catch {
         return "";
       }
     }
   };
+  //returns an error if the name is invalid
   useEffect(() => {
     const exec = async () => {
       setNameError(await getNameError());
@@ -119,6 +131,7 @@ const SignUpScreen = ({ navigation }) => {
     };
     exec();
   }, [name, email, password, confirmPass]);
+  //Returns the value of signupError if they incorrectly filled out the fields
   const signupFailed = () => {
     setName("");
     setPassword("");
@@ -127,15 +140,17 @@ const SignUpScreen = ({ navigation }) => {
     setSignupError("Signup error occured. Please try again.");
   };
 
+  //returns the setSignUpError when incorrectly signed up
   useEffect(() => {
     setSignupError("");
   }, [name, password, confirmPass, email]);
 
+  //returns when the signup data is valid
   const signup = () => {
     if (!isValid) {
       return;
     }
-
+    //stores the data
     const data: Signup = {
       name,
       password,
@@ -147,14 +162,14 @@ const SignUpScreen = ({ navigation }) => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((res) =>
-        res.ok ? navigation.navigate("HomeStack") : signupFailed()
-      )
+      .then((res) => (res.ok ? setAuthenticated(true) : signupFailed()))
       .catch((_) => signupFailed());
   };
-
+  // Returns the css and TypeScripts of the page. The style and the components of the screen
   return (
-    <SafeAreaView style={{ justifyContent: "center", flex: 1 }}>
+    <SafeAreaView
+      style={{ justifyContent: "center", flex: 1, backgroundColor: "#0B0B3B" }}
+    >
       <View style={{ paddingHorizontal: 20 }}>
         <Text style={interactive.title}>Sign Up</Text>
         {signupError && <Text style={interactive.error}>signupError</Text>}
@@ -173,6 +188,7 @@ const SignUpScreen = ({ navigation }) => {
             style={{
               flex: 1,
               paddingVertical: 0,
+              color: "#666",
             }}
             secureTextEntry={false}
             onChangeText={setName}
@@ -194,6 +210,7 @@ const SignUpScreen = ({ navigation }) => {
             style={{
               flex: 1,
               paddingVertical: 0,
+              color: "#666",
             }}
             keyboardType="email-address"
             onChangeText={setEmail}
@@ -215,6 +232,7 @@ const SignUpScreen = ({ navigation }) => {
             style={{
               flex: 1,
               paddingVertical: 0,
+              color: "#666",
             }}
             secureTextEntry={true}
             onChangeText={setPassword}
@@ -238,6 +256,7 @@ const SignUpScreen = ({ navigation }) => {
             style={{
               flex: 1,
               paddingVertical: 0,
+              color: "#666",
             }}
             secureTextEntry={true}
             onChangeText={setConfirmPass}
@@ -253,6 +272,7 @@ const SignUpScreen = ({ navigation }) => {
           style={{
             ...interactive.primaryButton,
             opacity: isValid ? 1 : 0.7,
+            backgroundColor: "#F5C528",
           }}
         >
           <Text style={{ color: "#fff", fontSize: 20 }}>Sign Up</Text>
@@ -273,13 +293,15 @@ const SignUpScreen = ({ navigation }) => {
             alignItems: "center",
           }}
         >
-          <Text>Already Signed Up?</Text>
+          <Text style={{ color: "#666" }}>Already Signed Up?</Text>
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
             }}
           >
-            <Text style={interactive.linkButton}>Log In</Text>
+            <Text style={{ ...interactive.linkButton, color: "#F5C528" }}>
+              Log In
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

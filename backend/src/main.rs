@@ -37,7 +37,10 @@ async fn main() -> Result<(), rocket::Error> {
                 user_update,
                 login,
                 logout,
-                get_secret
+                check_auth,
+                get_widget,
+                add_widget,
+                update_widget_entry,
             ],
         )
         .attach(server::settings::Cors)
