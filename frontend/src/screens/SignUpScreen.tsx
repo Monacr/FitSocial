@@ -191,6 +191,7 @@ const SignUpScreen = ({ navigation }) => {
               color: "#666",
             }}
             secureTextEntry={false}
+            autoComplete="off"
             onChangeText={setName}
           />
           {nameError && <Text style={interactive.error}>{nameError}</Text>}

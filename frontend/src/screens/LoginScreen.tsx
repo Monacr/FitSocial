@@ -83,6 +83,7 @@ const LoginScreen = ({ navigation }) => {
               flex: 1,
               paddingVertical: 0,
             }}
+            autoComplete="username"
             keyboardType="email-address"
           />
         </View>

@@ -24,13 +24,7 @@ const filler = Array(100)
 
 const StatsScreen = ({ navigation }) => {
   const renderWidgets = (info) => {
-    return (
-      <GraphWidget
-        title={info.item.title}
-        timeframe={info.item.timeframe}
-        data={filler}
-      />
-    );
+    return <GraphWidget title={info.item.title} data={filler} />;
   };
   return (
     <FlatList
