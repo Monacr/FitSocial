@@ -6,14 +6,20 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import { PrimaryBlue, PrimaryGold } from "../../constants";
+import { PrimaryBlue, PrimaryGold, URI } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import WheelPicker from "react-native-wheely";
 import { ActionSheetRef } from "react-native-actions-sheet";
 import BottomPopupsheet from "../../components/BottomPopupSheet";
 import WidgetEntry from "../../components/WidgetEntry";
+import { WidgetType } from "../../bindings/WidgetType";
+import { cmpDate, widgetTitle } from "../../utils";
+import { Date } from "../../bindings/Date";
+import { useAuth } from "../../components/AuthProvider";
+import { Widget } from "../../bindings/Widget";
+
 /**
  * Timeframe to display on the graph in days
  **/
@@ -35,20 +41,65 @@ const TimeframeNames = [
   "All",
 ];
 
-const GraphWidget = ({ title, data }) => {
+type PropsType = {
+  widget_type: WidgetType;
+};
+
+const GraphWidget = ({ widget_type }: PropsType) => {
   // Load from storage
   const startTimeframeIndex = 0;
+  const title = widgetTitle(widget_type);
 
+  const { authUser } = useAuth();
   const [timeframe, setTimeframe] = useState(Timeframe.Week);
+  const [entries, setEntries] = useState<[Date, number][]>([]);
+
   const timeframeSelector = useRef<ActionSheetRef>(null);
   const entrySelector = useRef<ActionSheetRef>(null);
 
+  useEffect(() => {
+    getEntries();
+  }, []);
+
+  async function getEntries() {
+    const res = await fetch(`${URI}/users/${authUser}/stats/${widget_type}`);
+    if (res.ok) {
+      const data = (await res.json()) as Widget;
+      setEntries(data.entries);
+    }
+  }
+
   function getData(): number[] {
+    // Sort by date
+    const data = entries
+      .sort(([d1, _], [d2, __]) => cmpDate(d1, d2))
+      .map(([_, n], __) => n);
+
+    if (data.length == 0) {
+      return [0];
+    }
     if (timeframe === Timeframe.All) {
       return data;
     }
 
     return data.slice(Math.max(0, data.length - timeframe));
+  }
+
+  function getLabels(): string[] {
+    // Get stuff in the timeframe:
+    let truncated = entries.sort(([d1, _], [d2, __]) => cmpDate(d1, d2));
+    if (timeframe !== Timeframe.All) {
+      truncated = truncated.slice(Math.max(0, truncated.length - timeframe));
+    }
+
+    const labels = truncated.map(([d, _], __) => `${d.month}/${d.day}`);
+
+    // Select 7 dates, including first and last
+    const toSelect = new Set();
+    for (let i = 0; i < 8; i++) {
+      toSelect.add(Math.floor((i / 7.0) * (labels.length - 1)));
+    }
+    return labels.filter((_, i) => toSelect.has(i));
   }
 
   function updateTimeframe(i: number) {
@@ -76,7 +127,11 @@ const GraphWidget = ({ title, data }) => {
         ref={entrySelector}
         title={"Add New " + title + " Entry"}
       >
-        <WidgetEntry title={title} />
+        <WidgetEntry
+          widget_type={widget_type}
+          updateEntryCallback={getEntries}
+          ref={entrySelector}
+        />
       </BottomPopupsheet>
       <View style={styles.topRow}>
         <Text style={styles.title}>{title}</Text>
@@ -103,7 +158,7 @@ const GraphWidget = ({ title, data }) => {
       </View>
       <LineChart
         data={{
-          labels: ["January", "February", "April", "May", "June"],
+          labels: getLabels(),
           datasets: [
             {
               data: getData(),

@@ -1,31 +1,21 @@
 import { StyleSheet, FlatList } from "react-native";
+import { WidgetType } from "../bindings/WidgetType";
 import GraphWidget, { Timeframe } from "./widgets/GraphWidget";
+import { Date } from "../bindings/Date";
 
 const data = [
   { title: "Weight", timeframe: Timeframe.Week },
   { title: "Squat", timeframe: Timeframe.All },
   {
-    title: "Bench",
-    timeframe: Timeframe.TwoMonth,
-  },
-  {
     title: "Deadlift",
     timeframe: Timeframe.Month,
   },
-  {
-    title: "Miles",
-    timeframe: Timeframe.SixMonth,
-  },
 ];
 
-const filler = Array(100)
-  .fill(0)
-  .map((_) => Math.random() * 400);
-
 const StatsScreen = ({ navigation }) => {
-  const renderWidgets = (info) => {
-    return <GraphWidget title={info.item.title} data={filler} />;
-  };
+  function renderWidgets(info) {
+    return <GraphWidget widget_type={info.item.title} />;
+  }
   return (
     <FlatList
       data={data}

@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { LoginInfo } from "../bindings/LoginInfo";
+import { User } from "../bindings/User";
 import { useAuth } from "../components/AuthProvider";
 import { withoutAuth } from "../components/WithAuth";
 import { URI } from "../constants";
@@ -50,7 +51,8 @@ const LoginScreen = ({ navigation }) => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((res) => (res.ok ? setAuthenticated(true) : loginFailed()))
+      .then((res) => res.json())
+      .then((user) => setAuthenticated((user as User).name))
       .catch((_) => loginFailed());
   };
 

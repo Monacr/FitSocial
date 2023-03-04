@@ -71,8 +71,8 @@ pub async fn user_update(
 }
 
 #[get("/users/checkAuth")]
-pub async fn check_auth(jar: &CookieJar<'_>, name: AuthenticatedUser) -> Result<(), ()> {
-    Ok(())
+pub async fn check_auth(jar: &CookieJar<'_>, user: AuthenticatedUser) -> Result<String, ()> {
+    Ok(user.0)
 }
 
 #[get("/users/<user>/stats/<widget_type>")]

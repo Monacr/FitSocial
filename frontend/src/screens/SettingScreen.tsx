@@ -12,7 +12,7 @@ const SettingScreen = () => {
     });
 
     if (res.ok) {
-      setAuthenticated(false);
+      setAuthenticated(null);
     }
   };
   return (

@@ -1,28 +1,41 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { User } from "../bindings/User";
 import { URI } from "../constants";
 
 const AuthContext = createContext({
   isAuthenticated: false,
   isLoading: true,
   setAuthenticated: undefined,
+  authUser: null,
 });
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setAuthenticated] = useState(false);
+  const [isAuthenticated, setAuth] = useState(false);
+  const [authUser, setUser] = useState<string>(null);
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
         const res = await fetch(URI + "/users/checkAuth");
-        setAuthenticated(res.ok);
+        setAuthenticated(await res.text());
       } catch {
-        setAuthenticated(false);
+        setAuthenticated(null);
       }
       setLoading(false);
     };
     initializeAuth();
   }, []);
+
+  function setAuthenticated(username: string) {
+    if (username == null) {
+      setAuth(false);
+    } else {
+      setAuth(true);
+    }
+
+    setUser(username);
+  }
 
   return (
     <AuthContext.Provider
@@ -30,6 +43,7 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         isLoading,
         setAuthenticated,
+        authUser,
       }}
     >
       {children}
