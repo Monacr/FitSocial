@@ -1,4 +1,10 @@
-import { StyleSheet, FlatList, TouchableOpacity, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import GraphWidget from "./widgets/GraphWidget";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../components/AuthProvider";
@@ -12,6 +18,7 @@ import WheelPicker from "react-native-wheely";
 import { widgetTitle } from "../utils";
 import { interactive } from "../styles/Interactive";
 import { WidgetType } from "../bindings/WidgetType";
+import LoadingScreen from "../components/Loading";
 
 const WidgetTypes: WidgetType[] = [
   "Deadlift",
@@ -24,20 +31,23 @@ const WidgetTypes: WidgetType[] = [
 const StatsScreen = () => {
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [chosenIdx, setChosenIdx] = useState(0);
+  const [loading, setLoading] = useState(true);
   const { authUser } = useAuth();
 
   const widgetSelector = useRef<ActionSheetRef>(null);
 
   useEffect(() => {
+    setLoading(true);
     async function getWidgets() {
       const res = await fetch(`${URI}/users/stats/${authUser}`).catch();
       if (res.ok) {
         const data = (await res.json()) as Widget[];
         setWidgets(data);
+        setLoading(false);
       }
     }
     getWidgets();
-  }, []);
+  }, [authUser]);
 
   // Get all the widgets that the user doesn't already have added
   const addWidgetTypes = WidgetTypes.filter(
@@ -86,8 +96,13 @@ const StatsScreen = () => {
   }
 
   const data = (widgets as (Widget | string)[]).concat("add");
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <>
+    <View style={styles.container}>
       <FlatList
         data={data}
         renderItem={renderWidgets}
@@ -112,7 +127,7 @@ const StatsScreen = () => {
           </TouchableOpacity>
         </>
       </BottomPopupSheet>
-    </>
+    </View>
   );
 };
 
@@ -120,7 +135,8 @@ export default StatsScreen;
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
+    marginVertical: 20,
+    flex: 1,
   },
   add: {
     alignSelf: "center",

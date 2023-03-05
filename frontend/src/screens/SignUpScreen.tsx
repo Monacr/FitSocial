@@ -10,7 +10,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Signup } from "../bindings/Signup";
 import { useEffect, useState } from "react";
-import { URI } from "../constants";
+import { PrimaryGold, URI } from "../constants";
 import { interactive } from "../styles/Interactive";
 import { useAuth } from "../components/AuthProvider";
 
@@ -162,7 +162,7 @@ const SignUpScreen = ({ navigation }) => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((res) => (res.ok ? setAuthenticated(true) : signupFailed()))
+      .then((res) => (res.ok ? setAuthenticated(name) : signupFailed()))
       .catch((_) => signupFailed());
   };
   // Returns the css and TypeScripts of the page. The style and the components of the screen
@@ -273,7 +273,7 @@ const SignUpScreen = ({ navigation }) => {
           style={{
             ...interactive.primaryButton,
             opacity: isValid ? 1 : 0.7,
-            backgroundColor: "#F5C528",
+            backgroundColor: PrimaryGold,
           }}
         >
           <Text style={{ color: "#fff", fontSize: 20 }}>Sign Up</Text>

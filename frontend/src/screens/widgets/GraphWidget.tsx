@@ -93,6 +93,7 @@ const GraphWidget = ({ widgetType, initialEntries }: PropsType) => {
   const entrySelector = useRef<ActionSheetRef>(null);
 
   async function getEntries() {
+    console.log("Graph:", authUser);
     const res = await fetch(
       `${URI}/users/stats/${authUser}/${widgetType}`
     ).catch();

@@ -9,7 +9,6 @@ const AuthContext = createContext({
 });
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setAuth] = useState(false);
   const [authUser, setUser] = useState<string>(null);
   const [isLoading, setLoading] = useState(true);
 
@@ -29,19 +28,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   function setAuthenticated(username: string) {
-    if (username == null) {
-      setAuth(false);
-    } else {
-      setAuth(true);
-    }
-
+    console.log("Auth:", username);
     setUser(username);
   }
 
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated,
+        isAuthenticated: authUser !== null,
         isLoading,
         setAuthenticated,
         authUser,
