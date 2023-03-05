@@ -1,13 +1,29 @@
 import { LineChart } from "react-native-chart-kit";
-import { View, Dimensions, StyleSheet, Text } from "react-native";
-import { PrimaryBlue, PrimaryGold } from "../../constants";
+import {
+  View,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import { PrimaryBlue, PrimaryGold, URI } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { useState, useRef } from "react";
+import WheelPicker from "react-native-wheely";
+import { ActionSheetRef } from "react-native-actions-sheet";
+import BottomPopupsheet from "../../components/BottomPopupSheet";
+import WidgetEntry from "../../components/WidgetEntry";
+import { WidgetType } from "../../bindings/WidgetType";
+import { cmpDate, widgetTitle } from "../../utils";
+import { Date } from "../../bindings/Date";
+import { useAuth } from "../../components/AuthProvider";
+import { Widget } from "../../bindings/Widget";
 
 /**
  * Timeframe to display on the graph in days
  **/
-export enum Timeframe {
+enum Timeframe {
   Week = 7,
   Month = 30,
   TwoMonth = 61,
@@ -16,8 +32,86 @@ export enum Timeframe {
   All,
 }
 
-const GraphWidget = ({ title, timeframe, data }) => {
+namespace TimeframeUtils {
+  export function toString(timeframe: Timeframe): string {
+    switch (timeframe) {
+      case Timeframe.Week:
+        return "Week";
+      case Timeframe.Month:
+        return "Month";
+      case Timeframe.TwoMonth:
+        return "Two Months";
+      case Timeframe.SixMonth:
+        return "Six Months";
+      case Timeframe.Year:
+        return "Year";
+      case Timeframe.All:
+        return "All";
+    }
+  }
+
+  export function fromString(str: string): Timeframe {
+    switch (str) {
+      case "Week":
+        return Timeframe.Week;
+      case "Month":
+        return Timeframe.Month;
+      case "Two Months":
+        return Timeframe.TwoMonth;
+      case "Six Months":
+        return Timeframe.SixMonth;
+      case "Year":
+        return Timeframe.Year;
+      case "All":
+        return Timeframe.All;
+    }
+
+    return null;
+  }
+}
+
+const TimeframeNames = Object.keys(Timeframe)
+  .filter((k) => isNaN(Number(k)))
+  .map((t) => TimeframeUtils.toString(Timeframe[t]));
+
+type PropsType = {
+  widgetType: WidgetType;
+  initialEntries: [Date, number][];
+};
+
+const GraphWidget = ({ widgetType, initialEntries }: PropsType) => {
+  const { authUser } = useAuth();
+  const [timeframe, setTimeframe] = useState(Timeframe.Week);
+  const [entries, setEntries] = useState<[Date, number][]>(initialEntries);
+
+  const startTimeframeIndex = TimeframeNames.indexOf(
+    TimeframeUtils.toString(timeframe)
+  );
+  const title = widgetTitle(widgetType);
+
+  const timeframeSelector = useRef<ActionSheetRef>(null);
+  const entrySelector = useRef<ActionSheetRef>(null);
+
+  async function getEntries() {
+    console.log("Graph:", authUser);
+    const res = await fetch(
+      `${URI}/users/stats/${authUser}/${widgetType}`
+    ).catch();
+    if (res.ok) {
+      const data = (await res.json()) as Widget;
+      setEntries(data.entries);
+    }
+  }
+
   function getData(): number[] {
+    // Sort by date
+    const data = entries
+      .sort(([d1, _], [d2, __]) => cmpDate(d1, d2))
+      .map(([_, n], __) => n);
+
+    if (data.length == 0) {
+      return [0];
+    }
     if (timeframe === Timeframe.All) {
       return data;
     }
@@ -25,20 +119,83 @@ const GraphWidget = ({ title, timeframe, data }) => {
     return data.slice(Math.max(0, data.length - timeframe));
   }
 
+  function getLabels(): string[] {
+    // Get stuff in the timeframe:
+    let truncated = entries.sort(([d1, _], [d2, __]) => cmpDate(d1, d2));
+    if (timeframe !== Timeframe.All) {
+      truncated = truncated.slice(Math.max(0, truncated.length - timeframe));
+    }
+
+    const labels = truncated.map(([d, _], __) => `${d.month}/${d.day}`);
+
+    // Select 7 dates, including first and last
+    const toSelect = new Set();
+    for (let i = 0; i < 8; i++) {
+      toSelect.add(Math.floor((i / 7.0) * (labels.length - 1)));
+    }
+    return labels.filter((_, i) => toSelect.has(i));
+  }
+
+  function updateTimeframe(i: number) {
+    const t = TimeframeUtils.fromString(TimeframeNames[i]);
+    if (t !== null) {
+      setTimeframe(t);
+    }
+  }
+
   return (
     <LinearGradient
       style={styles.container}
       start={{ x: 0.5, y: 1 }}
-      end={{ x: 1, y: 0 }}
+      end={{ x: 1.4, y: 0 }}
       colors={[PrimaryBlue, PrimaryGold]}
     >
+      <BottomPopupsheet
+        title={"Choose a Timeframe to Display"}
+        ref={timeframeSelector}
+      >
+        <WheelPicker
+          selectedIndex={startTimeframeIndex}
+          options={TimeframeNames}
+          onChange={updateTimeframe}
+        />
+      </BottomPopupsheet>
+      <BottomPopupsheet
+        ref={entrySelector}
+        title={"Add New " + title + " Entry"}
+      >
+        <WidgetEntry
+          widgetType={widgetType}
+          updateEntryCallback={getEntries}
+          ref={entrySelector}
+        />
+      </BottomPopupsheet>
       <View style={styles.topRow}>
         <Text style={styles.title}>{title}</Text>
-        <Ionicons name="add-outline" size={30} style={styles.add} />
+        <View style={styles.buttons}>
+          <TouchableOpacity
+            onPress={() => {
+              entrySelector.current?.show();
+            }}
+          >
+            <Ionicons name="add-outline" size={30} style={styles.add} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              timeframeSelector.current?.show();
+            }}
+          >
+            <Ionicons
+              name="ellipsis-vertical-outline"
+              size={30}
+              style={styles.timeSelector}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
       <LineChart
         data={{
-          labels: ["January", "February", "April", "May", "June"],
+          labels: getLabels(),
           datasets: [
             {
               data: getData(),
@@ -82,8 +239,16 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     fontWeight: "bold",
   },
-  add: {
+  buttons: {
     alignSelf: "flex-end",
+    flexDirection: "row",
+  },
+  add: {
+    color: "white",
+    top: "-1%",
+    marginHorizontal: 10,
+  },
+  timeSelector: {
     color: "white",
     top: "-1%",
   },
