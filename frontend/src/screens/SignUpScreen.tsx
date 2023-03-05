@@ -172,7 +172,6 @@ const SignUpScreen = ({ navigation }) => {
     >
       <View style={{ paddingHorizontal: 20 }}>
         <Text style={interactive.titleTwo}>Fit Social</Text>
-        <Text style={interactive.titleThree}>Fit Social</Text>
         <Text style={interactive.title}>Sign Up</Text>
         {signupError && <Text style={interactive.error}>signupError</Text>}
 
