@@ -1,11 +1,12 @@
 import { StyleSheet } from "react-native";
+import { PrimaryBlue } from "../constants";
 
 export const interactive = StyleSheet.create({
   title: {
     fontFamily: "Roboto-Medium",
     fontSize: 28,
     fontWeight: "500",
-    color: "#F5C528",
+    color: PrimaryBlue,
     marginBottom: 40,
   },
   bar: {
@@ -20,7 +21,7 @@ export const interactive = StyleSheet.create({
     fontSize: 12,
   },
   primaryButton: {
-    backgroundColor: "#4287f5",
+    backgroundColor: PrimaryBlue,
     paddingVertical: 10,
     alignItems: "center",
     borderRadius: 5,

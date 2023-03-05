@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { LoginInfo } from "../bindings/LoginInfo";
+import { User } from "../bindings/User";
 import { useAuth } from "../components/AuthProvider";
 import { withoutAuth } from "../components/WithAuth";
 import { URI } from "../constants";
@@ -42,16 +43,24 @@ const LoginScreen = ({ navigation }) => {
     setPassword("");
   };
 
-  const submit = () => {
+  const submit = async () => {
     const data: LoginInfo = { user: name, password };
 
-    fetch(URI + "/login", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then((res) => (res.ok ? setAuthenticated(true) : loginFailed()))
-      .catch((_) => loginFailed());
+    try {
+      const res = await fetch(URI + "/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        const user = (await res.json()) as User;
+        setAuthenticated(user.name);
+        return;
+      }
+    } catch (_) {}
+
+    loginFailed();
   };
 
   return (
@@ -83,6 +92,7 @@ const LoginScreen = ({ navigation }) => {
               flex: 1,
               paddingVertical: 0,
             }}
+            autoComplete="username"
             keyboardType="email-address"
           />
         </View>

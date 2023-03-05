@@ -1,19 +1,20 @@
 import { View, Text, StyleSheet, Button } from "react-native";
 import { useAuth } from "../components/AuthProvider";
-import { URI } from "../constants";
-import { withAuth } from "../components/WithAuth";
+import { PrimaryBlue, URI } from "../constants";
 
-const SettingScreen = () => {
+const SettingScreen = ({ navigation }) => {
   const { setAuthenticated } = useAuth();
   const logout = async () => {
-    const res = await fetch(URI + "/logout", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-    });
+    try {
+      const res = await fetch(URI + "/logout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+      });
 
-    if (res.ok) {
-      setAuthenticated(false);
-    }
+      if (res.ok) {
+        setAuthenticated(null);
+      }
+    } catch (_) {}
   };
   return (
     <View style={styles.container}>
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
   topPage: {
     fontSize: 26,
     marginTop: 10,
-    color: "#000080",
+    color: PrimaryBlue,
   },
   buttonContainer: {
     marginTop: 50,

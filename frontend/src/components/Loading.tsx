@@ -1,10 +1,10 @@
 import { ActivityIndicator, View } from "react-native";
+import { PrimaryGold } from "../constants";
 
-// TODO: change color to standardized fit social colors
-export const LoadingScreen = () => {
+export default function LoadingScreen() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <ActivityIndicator color="#F5C528" size="large" />
+      <ActivityIndicator color={PrimaryGold} size="large" />
     </View>
   );
-};
+}
