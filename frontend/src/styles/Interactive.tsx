@@ -1,14 +1,33 @@
 import { StyleSheet } from "react-native";
-import { PrimaryBlue } from "../constants";
+import {PrimaryBlue, PrimaryGold} from "../constants";
 
 export const interactive = StyleSheet.create({
   title: {
     fontFamily: "Roboto-Medium",
     fontSize: 28,
     fontWeight: "500",
-    color: PrimaryBlue,
-    marginBottom: 40,
+    color: PrimaryGold,
+    marginBottom: 20,
   },
+
+  titleTwo: {
+    fontFamily: "Roboto-Medium",
+    fontSize: 28,
+    fontWeight: "500",
+    color: PrimaryBlue,
+    marginBottom: 50,
+    textAlign: "center",
+  },
+
+  titleThree: {
+    fontFamily: "Roboto-Medium",
+    fontSize: 28,
+    fontWeight: "500",
+    color: PrimaryBlue,
+    marginBottom: 50,
+    textAlign: "center",
+  },
+
   bar: {
     flexDirection: "row",
     borderBottomColor: "#ccc",
@@ -27,5 +46,5 @@ export const interactive = StyleSheet.create({
     borderRadius: 5,
     marginTop: 20,
   },
-  linkButton: { color: "#4287f5", fontSize: 16, marginLeft: 5 },
+  linkButton: { color: PrimaryBlue, fontSize: 16, marginLeft: 5 },
 });

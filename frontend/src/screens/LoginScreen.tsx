@@ -67,6 +67,7 @@ const LoginScreen = ({ navigation }) => {
     <SafeAreaView style={{ justifyContent: "center", flex: 1 }}>
       <View style={{ paddingHorizontal: 20 }}>
         <View style={{ alignItems: "center" }}></View>
+        <Text style={interactive.titleTwo}>Fit Social</Text>
         <Text style={interactive.title}>Log In</Text>
 
         {error && (
@@ -79,7 +80,7 @@ const LoginScreen = ({ navigation }) => {
           <Ionicons
             name="pencil-outline"
             size={20}
-            color="#666"
+            color="#000080"
             style={{
               marginRight: 5,
             }}
@@ -91,6 +92,8 @@ const LoginScreen = ({ navigation }) => {
             style={{
               flex: 1,
               paddingVertical: 0,
+              color: "#000080"
+
             }}
             autoComplete="username"
             keyboardType="email-address"
@@ -101,7 +104,7 @@ const LoginScreen = ({ navigation }) => {
           <Ionicons
             name="ios-lock-closed-outline"
             size={20}
-            color="#666"
+            color= "#000080"
             style={{
               marginRight: 5,
             }}
@@ -113,12 +116,13 @@ const LoginScreen = ({ navigation }) => {
             style={{
               flex: 1,
               paddingVertical: 0,
+              color: "#000080"
             }}
             secureTextEntry={true}
           />
 
           <TouchableOpacity onPress={() => {}}>
-            <Text style={{ color: "#333", fontSize: 12 }}>
+            <Text style={{ color: "#000080", fontSize: 12, marginTop: 6 }}>
               Forgot Password?
             </Text>
           </TouchableOpacity>
@@ -126,9 +130,9 @@ const LoginScreen = ({ navigation }) => {
         <TouchableOpacity
           onPress={submit}
           disabled={!isValid}
-          style={{ ...interactive.primaryButton, opacity: isValid ? 1 : 0.7 }}
+          style={{ ...interactive.primaryButton, opacity: isValid ? 1 : 0.7, backgroundColor:"#F5C528" }}
         >
-          <Text style={{ color: "#fff", fontSize: 16 }}>Login</Text>
+          <Text style={{ color: "#fff", fontSize: 24, textAlign: "center" }}>Login</Text>
         </TouchableOpacity>
 
         <View
