@@ -14,11 +14,6 @@ mod prelude;
 mod server;
 mod store;
 
-#[get("/msg")]
-async fn message() -> &'static str {
-    "Fit Social Moment"
-}
-
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
     let config = Config {
@@ -29,7 +24,6 @@ async fn main() -> Result<(), rocket::Error> {
         .mount(
             "/",
             routes![
-                message,
                 get_user_by_name,
                 get_user_by_email,
                 get_users,
@@ -39,6 +33,7 @@ async fn main() -> Result<(), rocket::Error> {
                 logout,
                 check_auth,
                 get_widget,
+                get_widgets,
                 add_widget,
                 update_widget_entry,
             ],

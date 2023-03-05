@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, Button } from "react-native";
 import { useAuth } from "../components/AuthProvider";
-import { URI } from "../constants";
-import { withAuth } from "../components/WithAuth";
+import { PrimaryBlue, URI } from "../constants";
 
 const SettingScreen = () => {
   const { setAuthenticated } = useAuth();
@@ -37,7 +36,7 @@ const styles = StyleSheet.create({
   topPage: {
     fontSize: 26,
     marginTop: 10,
-    color: "#000080",
+    color: PrimaryBlue,
   },
   buttonContainer: {
     marginTop: 50,

@@ -43,17 +43,24 @@ const LoginScreen = ({ navigation }) => {
     setPassword("");
   };
 
-  const submit = () => {
+  const submit = async () => {
     const data: LoginInfo = { user: name, password };
 
-    fetch(URI + "/login", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((user) => setAuthenticated((user as User).name))
-      .catch((_) => loginFailed());
+    try {
+      const res = await fetch(URI + "/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        const user = (await res.json()) as User;
+        setAuthenticated(user.name);
+        return;
+      }
+    } catch (_) {}
+
+    loginFailed();
   };
 
   return (

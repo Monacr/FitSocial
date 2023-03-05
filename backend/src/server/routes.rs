@@ -75,7 +75,7 @@ pub async fn check_auth(jar: &CookieJar<'_>, user: AuthenticatedUser) -> Result<
     Ok(user.0)
 }
 
-#[get("/users/<user>/stats/<widget_type>")]
+#[get("/users/stats/<user>/<widget_type>")]
 pub async fn get_widget(
     store: &State<Store>,
     user: &str,
@@ -84,6 +84,11 @@ pub async fn get_widget(
     WidgetController::get_widget(store, widget_type, user)
         .await
         .map(|data| data.into())
+}
+
+#[get("/users/stats/<user>")]
+pub async fn get_widgets(store: &State<Store>, user: &str) -> Json<Vec<Widget>> {
+    WidgetController::get_user_widgets(store, user).await.into()
 }
 
 #[post("/users/addWidget/<widget_type>", format = "json")]

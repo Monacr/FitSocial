@@ -9,7 +9,7 @@ import {
 import { PrimaryBlue, PrimaryGold, URI } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import WheelPicker from "react-native-wheely";
 import { ActionSheetRef } from "react-native-actions-sheet";
 import BottomPopupsheet from "../../components/BottomPopupSheet";
@@ -23,7 +23,7 @@ import { Widget } from "../../bindings/Widget";
 /**
  * Timeframe to display on the graph in days
  **/
-export enum Timeframe {
+enum Timeframe {
   Week = 7,
   Month = 30,
   TwoMonth = 61,
@@ -32,37 +32,70 @@ export enum Timeframe {
   All,
 }
 
-const TimeframeNames = [
-  "Week",
-  "Month",
-  "Two Months",
-  "Six Months",
-  "Year",
-  "All",
-];
+namespace TimeframeUtils {
+  export function toString(timeframe: Timeframe): string {
+    switch (timeframe) {
+      case Timeframe.Week:
+        return "Week";
+      case Timeframe.Month:
+        return "Month";
+      case Timeframe.TwoMonth:
+        return "Two Months";
+      case Timeframe.SixMonth:
+        return "Six Months";
+      case Timeframe.Year:
+        return "Year";
+      case Timeframe.All:
+        return "All";
+    }
+  }
+
+  export function fromString(str: string): Timeframe {
+    switch (str) {
+      case "Week":
+        return Timeframe.Week;
+      case "Month":
+        return Timeframe.Month;
+      case "Two Months":
+        return Timeframe.TwoMonth;
+      case "Six Months":
+        return Timeframe.SixMonth;
+      case "Year":
+        return Timeframe.Year;
+      case "All":
+        return Timeframe.All;
+    }
+
+    return null;
+  }
+}
+
+const TimeframeNames = Object.keys(Timeframe)
+  .filter((k) => isNaN(Number(k)))
+  .map((t) => TimeframeUtils.toString(Timeframe[t]));
 
 type PropsType = {
-  widget_type: WidgetType;
+  widgetType: WidgetType;
+  initialEntries: [Date, number][];
 };
 
-const GraphWidget = ({ widget_type }: PropsType) => {
-  // Load from storage
-  const startTimeframeIndex = 0;
-  const title = widgetTitle(widget_type);
-
+const GraphWidget = ({ widgetType, initialEntries }: PropsType) => {
   const { authUser } = useAuth();
   const [timeframe, setTimeframe] = useState(Timeframe.Week);
-  const [entries, setEntries] = useState<[Date, number][]>([]);
+  const [entries, setEntries] = useState<[Date, number][]>(initialEntries);
+
+  const startTimeframeIndex = TimeframeNames.indexOf(
+    TimeframeUtils.toString(timeframe)
+  );
+  const title = widgetTitle(widgetType);
 
   const timeframeSelector = useRef<ActionSheetRef>(null);
   const entrySelector = useRef<ActionSheetRef>(null);
 
-  useEffect(() => {
-    getEntries();
-  }, []);
-
   async function getEntries() {
-    const res = await fetch(`${URI}/users/${authUser}/stats/${widget_type}`);
+    const res = await fetch(
+      `${URI}/users/stats/${authUser}/${widgetType}`
+    ).catch();
     if (res.ok) {
       const data = (await res.json()) as Widget;
       setEntries(data.entries);
@@ -103,7 +136,10 @@ const GraphWidget = ({ widget_type }: PropsType) => {
   }
 
   function updateTimeframe(i: number) {
-    setTimeframe(Timeframe[TimeframeNames[i]]);
+    const t = TimeframeUtils.fromString(TimeframeNames[i]);
+    if (t !== null) {
+      setTimeframe(t);
+    }
   }
 
   return (
@@ -120,7 +156,7 @@ const GraphWidget = ({ widget_type }: PropsType) => {
         <WheelPicker
           selectedIndex={startTimeframeIndex}
           options={TimeframeNames}
-          onChange={(index) => updateTimeframe(index)}
+          onChange={updateTimeframe}
         />
       </BottomPopupsheet>
       <BottomPopupsheet
@@ -128,7 +164,7 @@ const GraphWidget = ({ widget_type }: PropsType) => {
         title={"Add New " + title + " Entry"}
       >
         <WidgetEntry
-          widget_type={widget_type}
+          widgetType={widgetType}
           updateEntryCallback={getEntries}
           ref={entrySelector}
         />

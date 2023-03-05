@@ -31,12 +31,12 @@ const months = [
 ];
 
 type PropsType = {
-  widget_type: WidgetType;
+  widgetType: WidgetType;
   updateEntryCallback: () => void;
 };
 const WidgetEntry = forwardRef<ActionSheetRef, PropsType>(
-  ({ widget_type, updateEntryCallback }, ref) => {
-    const title = widgetTitle(widget_type);
+  ({ widgetType, updateEntryCallback }, ref) => {
+    const title = widgetTitle(widgetType);
     const [value, setValue] = useState("");
     const [date, setDate] = useState<Date>(dateFromStr(getToday()));
     const [selectingDate, setSelectingDate] = useState(getToday());
@@ -71,7 +71,7 @@ const WidgetEntry = forwardRef<ActionSheetRef, PropsType>(
       const unsafeRef = ref as MutableRefObject<ActionSheetRef>;
       unsafeRef.current?.hide();
       const widgetUpdate: AppendWidgetEntry = {
-        widget_type,
+        widget_type: widgetType,
         date,
         value: Number(value),
       };
@@ -106,7 +106,7 @@ const WidgetEntry = forwardRef<ActionSheetRef, PropsType>(
           <View>
             <View style={styles.container}>
               <View style={styles.bar}>
-                <Text style={{ fontWeight: "bold" }}>{title}</Text>
+                <Text style={{ fontWeight: "bold" }}>#</Text>
                 <TextInput
                   placeholder={title}
                   onChangeText={setValue}

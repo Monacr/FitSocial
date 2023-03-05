@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { User } from "../bindings/User";
 import { URI } from "../constants";
 
 const AuthContext = createContext({
@@ -18,7 +17,9 @@ export const AuthProvider = ({ children }) => {
     const initializeAuth = async () => {
       try {
         const res = await fetch(URI + "/users/checkAuth");
-        setAuthenticated(await res.text());
+        if (res.ok) {
+          setAuthenticated(await res.text());
+        }
       } catch {
         setAuthenticated(null);
       }
