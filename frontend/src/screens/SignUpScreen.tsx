@@ -168,9 +168,11 @@ const SignUpScreen = ({ navigation }) => {
   // Returns the css and TypeScripts of the page. The style and the components of the screen
   return (
     <SafeAreaView
-      style={{ justifyContent: "center", flex: 1, backgroundColor: "#0B0B3B" }}
+      style={{ justifyContent: "center", flex: 1}}
     >
       <View style={{ paddingHorizontal: 20 }}>
+        <Text style={interactive.titleTwo}>Fit Social</Text>
+        <Text style={interactive.titleThree}>Fit Social</Text>
         <Text style={interactive.title}>Sign Up</Text>
         {signupError && <Text style={interactive.error}>signupError</Text>}
 
@@ -178,7 +180,7 @@ const SignUpScreen = ({ navigation }) => {
           <Ionicons
             name="pencil-outline"
             size={20}
-            color="#666"
+            color="#000080"
             style={{
               marginRight: 5,
             }}
@@ -200,7 +202,7 @@ const SignUpScreen = ({ navigation }) => {
           <MaterialIcons
             name="alternate-email"
             size={20}
-            color="#666"
+            color="#000080"
             style={{
               marginRight: 5,
             }}
@@ -222,7 +224,7 @@ const SignUpScreen = ({ navigation }) => {
           <Ionicons
             name="ios-lock-closed-outline"
             size={20}
-            color="#666"
+            color="#000080"
             style={{
               marginRight: 5,
             }}
@@ -246,7 +248,7 @@ const SignUpScreen = ({ navigation }) => {
           <Ionicons
             name="ios-lock-closed-outline"
             size={20}
-            color="#666"
+            color="#000080"
             style={{
               marginRight: 5,
             }}
@@ -299,7 +301,7 @@ const SignUpScreen = ({ navigation }) => {
               navigation.goBack();
             }}
           >
-            <Text style={{ ...interactive.linkButton, color: "#F5C528" }}>
+            <Text style={{ ...interactive.linkButton, color: "#000080" }}>
               Log In
             </Text>
           </TouchableOpacity>
