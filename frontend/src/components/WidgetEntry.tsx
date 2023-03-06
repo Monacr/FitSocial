@@ -46,7 +46,7 @@ const WidgetEntry = forwardRef<ActionSheetRef, PropsType>(
       if (date === null) {
         return "";
       }
-      return `${months[date.month]} ${date.day} ${date.year}`;
+      return `${months[date.month - 1]} ${date.day} ${date.year}`;
     }
 
     function dateFromStr(str: String): Date {
