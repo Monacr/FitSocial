@@ -2,7 +2,6 @@
 //!
 //! Includes basic CRUD operations like create, read (get)
 //! update, and delete
-use crate::model::MutateResultData;
 use crate::prelude::*;
 use std::collections::BTreeMap;
 
@@ -99,7 +98,7 @@ impl Store {
         tb: &str,
         data: T,
         custom_id: Option<&str>,
-    ) -> Result<MutateResultData, Error> {
+    ) -> Result<String, Error> {
         let mut vars = btreemap! {
             "tb".into() => tb.into(),
         };
@@ -128,7 +127,6 @@ impl Store {
 
         if let Value::Object(mut obj) = first_val.first() {
             obj.try_take::<String>("id")
-                .map(MutateResultData::from)
                 .map_err(|err| Error::StoreFailToCreate(format!("exec_create {tb} {err}")))
         } else {
             Err(Error::StoreFailToCreate(format!(
@@ -137,11 +135,7 @@ impl Store {
         }
     }
 
-    pub async fn exec_update<T: Updatable>(
-        &self,
-        id: &str,
-        data: T,
-    ) -> Result<MutateResultData, Error> {
+    pub async fn exec_update<T: Updatable>(&self, id: &str, data: T) -> Result<String, Error> {
         // Make sure the data exists
         // TODO: there must be a way to do this directly in surreal?
         if !self.thing_exists(id).await? {
@@ -165,7 +159,6 @@ impl Store {
 
         if let Value::Object(mut obj) = first_res {
             obj.try_take::<String>("id")
-                .map(MutateResultData::from)
                 .map_err(|err| Error::StoreFailToCreate(format!("exec_update {id} {err}")))
         } else {
             Err(Error::StoreFailToCreate(format!(

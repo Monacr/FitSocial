@@ -8,6 +8,7 @@ import {
   useIsAuthenticated,
 } from "./src/components/AuthProvider";
 import HomeStack from "./src/components/HomeStack";
+import { SheetProvider } from "react-native-actions-sheet";
 
 const ScreenStack = createNativeStackNavigator();
 const Navigator = () => {
@@ -30,9 +31,11 @@ const Navigator = () => {
 const Root = () => {
   return (
     <FontLoader>
-      <AuthProvider>
-        <Navigator />
-      </AuthProvider>
+      <SheetProvider>
+        <AuthProvider>
+          <Navigator />
+        </AuthProvider>
+      </SheetProvider>
     </FontLoader>
   );
 };

@@ -2,6 +2,10 @@ Fit Social is a primarily mobile social media platform that allows users to trac
 
 ## Repo structure
 
+[Dev doc](./DevDoc.md) Documentation for developers.
+
+[User doc](./UserDoc.md) Documentation for users.
+
 [docs](./docs): The organizational documents relevant to the project; schedules, goals, and roles.
 
 [frontend](./frontend): Files relevant to the frontend of the project; static frontend files.
@@ -41,7 +45,7 @@ To serve the frontend, go to [frontend](./frontend) and run
 npm start
 ```
 
-You can then press `w` to view the UI locally on the web, or scan the QR code or click on the entry in Expo Go to run on mobile.
+You can then scan the QR code or click on the entry in Expo Go to run on mobile. You may be able to run the app on a Mac using an emulator, more information can be found [here](https://docs.expo.dev/workflow/ios-simulator/). It has not been tested if the app works on Android, but theoretically it should work. Note we do not currently support running the frontend on web.
 
 ## Testing
 

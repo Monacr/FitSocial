@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAuth } from "./AuthProvider";
-import { LoadingScreen } from "./Loading";
+import LoadingScreen from "./Loading";
 
 /**
    Taken from https://dev.to/justincy/detecting-a-user-s-authenticated-state-client-side-in-next-js-using-an-httponly-cookie-and-static-optimization-6ib
