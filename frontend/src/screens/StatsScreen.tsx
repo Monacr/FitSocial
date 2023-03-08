@@ -71,7 +71,10 @@ const StatsScreen = () => {
     if (info.item === "add") {
       return (
         <TouchableOpacity
-          onPress={() => widgetSelector.current?.show()}
+          onPress={() => {
+            widgetSelector.current?.show();
+            setChosenIdx(0);
+          }}
           key="add"
         >
           <LinearGradient
