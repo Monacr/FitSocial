@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+\mport React, { useState } from 'react';
 
 function UploadForm() {
     const [file, setFile] = useState<File | null>(null);
@@ -31,13 +31,6 @@ function UploadForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label>
-                Choose a file:
-                <input type="file" accept="image/,video/" onChange={handleFileChange} />
-            </label>
-            <button type="submit" disabled={!file}>Upload</button>
-        </form>
     );
 }
 
