@@ -28,7 +28,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   function setAuthenticated(username: string) {
-    console.log("Auth:", username);
     setUser(username);
   }
 
