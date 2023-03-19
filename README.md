@@ -1,5 +1,13 @@
 Fit Social is a primarily mobile social media platform that allows users to track, share, and compare their fitness progress. The ultimate goal of Fit Social is to bring people who have the same passion for fitness together and help them to gain motivation and information toward accomplishing their fitness goals.
 
+Fit Social uses Rust with Rocket.rs and SurrealDB in the backend, and React Native and Node for the frontend.
+
+## Screenshots
+
+![](./docs/images/signup.png)
+![](./docs/images/home.png)
+![](./docs/images/stats.png)
+
 ## Repo structure
 
 [Dev doc](./DevDoc.md) Documentation for developers.
