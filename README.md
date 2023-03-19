@@ -7,6 +7,9 @@ Fit Social uses Rust with Rocket.rs and SurrealDB in the backend, and React Nati
 <p float="left">
     <img src="./docs/images/signup.png" width="40%"> 
     <img src="./docs/images/home.png" width="40%">
+</p>
+
+<p align="middle">
     <img src="./docs/images/stats.png" width="40%">
 </p>
 
