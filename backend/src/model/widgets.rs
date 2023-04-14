@@ -6,7 +6,8 @@ use maplit::btreemap;
 use rand::seq::SliceRandom;
 use rocket::request::FromParam;
 use serde::{Deserialize, Serialize};
-use strum_macros::{Display, EnumString, ToString};
+use strum::IntoEnumIterator;
+use strum_macros::{Display, EnumIter, EnumString, ToString};
 use surrealdb::sql::{thing, Array, Object, Value};
 use ts_rs::TS;
 
@@ -16,7 +17,9 @@ use crate::{
 };
 
 /// Types of widgets possible
-#[derive(Debug, Serialize, TS, Clone, Copy, Deserialize, PartialEq, EnumString, Display)]
+#[derive(
+    Debug, Serialize, TS, Clone, Copy, Deserialize, PartialEq, EnumString, Display, EnumIter,
+)]
 #[ts(export, export_to = "../frontend/src/bindings/")]
 pub enum WidgetType {
     Weight,
@@ -222,6 +225,17 @@ impl WidgetController {
         Ok(widget)
     }
 
+    pub async fn get_user_widgets(store: &Store, user: &str) -> Vec<Widget> {
+        let mut res = Vec::new();
+        for widget_type in WidgetType::iter() {
+            if let Ok(widget) = Self::get_widget(store, widget_type, user).await {
+                res.push(widget);
+            }
+        }
+
+        res
+    }
+
     pub async fn get_widget(
         store: &Store,
         widget_type: WidgetType,
@@ -259,13 +273,23 @@ mod tests {
 
         let user = "test";
 
+        let empty = WidgetController::get_user_widgets(&store, user).await;
+        assert!(empty.is_empty());
+
         WidgetController::add_widget(&store, WidgetType::BenchPress, user)
+            .await
+            .expect("Creating a widget failed");
+
+        WidgetController::add_widget(&store, WidgetType::Deadlift, user)
             .await
             .expect("Creating a widget failed");
 
         WidgetController::get_widget(&store, WidgetType::BenchPress, user)
             .await
             .expect("Getting a widget failed");
+
+        let res = WidgetController::get_user_widgets(&store, user).await;
+        assert_eq!(res.len(), 2);
     }
 
     #[tokio::test]

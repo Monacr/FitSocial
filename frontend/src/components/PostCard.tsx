@@ -1,20 +1,25 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Container, Card, UserInfo, UserImg, UserName, UserInfoText, PostTime, PostText, PostImg, Interaction, InteractionWrapper, Divider, InteractionText} from '../styles/FeedStyles';
 import Ionicons from "react-native-vector-icons/Ionicons";
+
 const PostCard = ({item}) =>{
-    let likeIcon = item.liked ? 'heart' : 'heart-outline';
-    let likeIconColor = item.liked ? '#2e64e5' : '#333';
-    let likeText = null;
+    const [likes, setLikes] = useState(item.likes);
+    const [liked, setLiked] = useState(item.liked);
+
+    const handleLike = () => {
+        if (liked) {
+            setLikes(likes - 1);
+            setLiked(false);
+        } else {
+            setLikes(likes + 1);
+            setLiked(true);
+        }
+    };
+
+    let likeIcon = liked ? 'heart' : 'heart-outline';
+    let likeIconColor = liked ? '#2e64e5' : '#333';
+    let likeText = likes === 1 ? '1 Like' : `${likes} Likes`;
     let commentText = null;
-
-    if(item.likes==1){
-        likeText = '1 Like';
-    } else if(item.likes > 1){
-        likeText = item.likes + ' Likes';
-    } else{
-        likeText = 'Like';
-    }
-
     if(item.comments==1){
         commentText = '1 Comment';
     } else if(item.comments > 1){
@@ -22,6 +27,7 @@ const PostCard = ({item}) =>{
     } else{
         commentText = 'Comment';
     }
+
     return(
         <Card>
             <UserInfo>
@@ -34,9 +40,9 @@ const PostCard = ({item}) =>{
             <PostText>{item.post}</PostText>
             {item.postImg != 'none' ? <PostImg source={item.postImg}/> : <Divider/>}
             <InteractionWrapper>
-                <Interaction active={item.liked}>
+                <Interaction active={liked} onPress={handleLike}>
                     <Ionicons name={likeIcon} size={25} color={likeIconColor} />
-                    <InteractionText active={item.liked}>{likeText}</InteractionText>
+                    <InteractionText active={liked}>{likeText}</InteractionText>
                 </Interaction>
                 <Interaction>
                     <Ionicons name="md-chatbubble-outline" size={25} />

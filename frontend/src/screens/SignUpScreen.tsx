@@ -10,7 +10,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Signup } from "../bindings/Signup";
 import { useEffect, useState } from "react";
-import { URI } from "../constants";
+import { PrimaryGold, URI } from "../constants";
 import { interactive } from "../styles/Interactive";
 import { useAuth } from "../components/AuthProvider";
 
@@ -162,15 +162,16 @@ const SignUpScreen = ({ navigation }) => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((res) => (res.ok ? setAuthenticated(true) : signupFailed()))
+      .then((res) => (res.ok ? setAuthenticated(name) : signupFailed()))
       .catch((_) => signupFailed());
   };
   // Returns the css and TypeScripts of the page. The style and the components of the screen
   return (
     <SafeAreaView
-      style={{ justifyContent: "center", flex: 1, backgroundColor: "#0B0B3B" }}
+      style={{ justifyContent: "center", flex: 1}}
     >
       <View style={{ paddingHorizontal: 20 }}>
+        <Text style={interactive.titleTwo}>Fit Social</Text>
         <Text style={interactive.title}>Sign Up</Text>
         {signupError && <Text style={interactive.error}>signupError</Text>}
 
@@ -178,7 +179,7 @@ const SignUpScreen = ({ navigation }) => {
           <Ionicons
             name="pencil-outline"
             size={20}
-            color="#666"
+            color="#000080"
             style={{
               marginRight: 5,
             }}
@@ -191,6 +192,7 @@ const SignUpScreen = ({ navigation }) => {
               color: "#666",
             }}
             secureTextEntry={false}
+            autoComplete="off"
             onChangeText={setName}
           />
           {nameError && <Text style={interactive.error}>{nameError}</Text>}
@@ -200,7 +202,7 @@ const SignUpScreen = ({ navigation }) => {
           <MaterialIcons
             name="alternate-email"
             size={20}
-            color="#666"
+            color="#000080"
             style={{
               marginRight: 5,
             }}
@@ -222,7 +224,7 @@ const SignUpScreen = ({ navigation }) => {
           <Ionicons
             name="ios-lock-closed-outline"
             size={20}
-            color="#666"
+            color="#000080"
             style={{
               marginRight: 5,
             }}
@@ -246,7 +248,7 @@ const SignUpScreen = ({ navigation }) => {
           <Ionicons
             name="ios-lock-closed-outline"
             size={20}
-            color="#666"
+            color="#000080"
             style={{
               marginRight: 5,
             }}
@@ -272,7 +274,7 @@ const SignUpScreen = ({ navigation }) => {
           style={{
             ...interactive.primaryButton,
             opacity: isValid ? 1 : 0.7,
-            backgroundColor: "#F5C528",
+            backgroundColor: PrimaryGold,
           }}
         >
           <Text style={{ color: "#fff", fontSize: 20 }}>Sign Up</Text>
@@ -299,7 +301,7 @@ const SignUpScreen = ({ navigation }) => {
               navigation.goBack();
             }}
           >
-            <Text style={{ ...interactive.linkButton, color: "#F5C528" }}>
+            <Text style={{ ...interactive.linkButton, color: "#000080" }}>
               Log In
             </Text>
           </TouchableOpacity>

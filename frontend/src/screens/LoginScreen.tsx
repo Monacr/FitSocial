@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { LoginInfo } from "../bindings/LoginInfo";
+import { User } from "../bindings/User";
 import { useAuth } from "../components/AuthProvider";
 import { withoutAuth } from "../components/WithAuth";
 import { URI } from "../constants";
@@ -42,22 +43,31 @@ const LoginScreen = ({ navigation }) => {
     setPassword("");
   };
 
-  const submit = () => {
+  const submit = async () => {
     const data: LoginInfo = { user: name, password };
 
-    fetch(URI + "/login", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then((res) => (res.ok ? setAuthenticated(true) : loginFailed()))
-      .catch((_) => loginFailed());
+    try {
+      const res = await fetch(URI + "/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        const user = (await res.json()) as User;
+        setAuthenticated(user.name);
+        return;
+      }
+    } catch (_) {}
+
+    loginFailed();
   };
 
   return (
     <SafeAreaView style={{ justifyContent: "center", flex: 1 }}>
       <View style={{ paddingHorizontal: 20 }}>
         <View style={{ alignItems: "center" }}></View>
+        <Text style={interactive.titleTwo}>Fit Social</Text>
         <Text style={interactive.title}>Log In</Text>
 
         {error && (
@@ -70,7 +80,7 @@ const LoginScreen = ({ navigation }) => {
           <Ionicons
             name="pencil-outline"
             size={20}
-            color="#666"
+            color="#000080"
             style={{
               marginRight: 5,
             }}
@@ -82,7 +92,10 @@ const LoginScreen = ({ navigation }) => {
             style={{
               flex: 1,
               paddingVertical: 0,
+              color: "#000080"
+
             }}
+            autoComplete="username"
             keyboardType="email-address"
           />
         </View>
@@ -91,7 +104,7 @@ const LoginScreen = ({ navigation }) => {
           <Ionicons
             name="ios-lock-closed-outline"
             size={20}
-            color="#666"
+            color= "#000080"
             style={{
               marginRight: 5,
             }}
@@ -103,12 +116,13 @@ const LoginScreen = ({ navigation }) => {
             style={{
               flex: 1,
               paddingVertical: 0,
+              color: "#000080"
             }}
             secureTextEntry={true}
           />
 
           <TouchableOpacity onPress={() => {}}>
-            <Text style={{ color: "#333", fontSize: 12 }}>
+            <Text style={{ color: "#000080", fontSize: 12, marginTop: 6 }}>
               Forgot Password?
             </Text>
           </TouchableOpacity>
@@ -116,9 +130,9 @@ const LoginScreen = ({ navigation }) => {
         <TouchableOpacity
           onPress={submit}
           disabled={!isValid}
-          style={{ ...interactive.primaryButton, opacity: isValid ? 1 : 0.7 }}
+          style={{ ...interactive.primaryButton, opacity: isValid ? 1 : 0.7, backgroundColor:"#F5C528" }}
         >
-          <Text style={{ color: "#fff", fontSize: 16 }}>Login</Text>
+          <Text style={{ color: "#fff", fontSize: 24, textAlign: "center" }}>Login</Text>
         </TouchableOpacity>
 
         <View

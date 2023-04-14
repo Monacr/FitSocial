@@ -1,7 +1,6 @@
 import HomeScreen from "../screens/HomeScreen";
 import SettingScreen from "../screens/SettingScreen";
 import StatsScreen from "../screens/StatsScreen";
-import UploadScreen from "../screens/UploadScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
@@ -29,16 +28,6 @@ function HomeStack() {
           tabBarLabel: "Stats",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="analytics-outline" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Upload"
-        component={UploadScreen}
-        options={{
-          tabBarLabel: "Post",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add-circle-outline" color={color} size={size} />
           ),
         }}
       />
