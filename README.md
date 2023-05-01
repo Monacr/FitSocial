@@ -26,6 +26,8 @@ Fit Social uses Rust with Rocket.rs and SurrealDB in the backend, and React Nati
 
 - Backend infastructure (authentication, database, model, and network layer)
 - Frontend application navigation infastructure
+- Ability to add fitness data widgets, with insights like progress im a given timeframe
+- Ability to upload and track fitness data on widgets
 - Main page and content viewing
 - Settings
 
